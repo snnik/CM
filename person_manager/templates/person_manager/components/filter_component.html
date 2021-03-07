@@ -1,0 +1,6 @@
+{% block filter %}
+<form class="form-inline my-2 my-lg-0" method="get" action="{% url 'persons_list' %}">
+        {{ filter_form.date_start }}
+        {{ filter_form.date_end }}
+</form>
+{% endblock %}

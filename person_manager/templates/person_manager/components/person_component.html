@@ -1,0 +1,21 @@
+{% block person_component %}
+{% load crispy_forms_tags %}
+<div class="form-row">
+    <input type="text" disabled hidden id="person-pk" value="{{id}}">
+    <div class="col-12 col-xl-3 form-group">
+        {{ form.last_name|as_crispy_field}}
+    </div>
+    <div class="col-12 col-xl-3 form-group">
+        {{ form.first_name|as_crispy_field }}
+    </div>
+    <div class="col-12 col-xl-3 form-group">
+        {{ form.patronymic_name|as_crispy_field }}
+    </div>
+    <div class="col-6 col-xl-2 form-group">
+        {{ form.birthday|as_crispy_field }}
+    </div>
+    <div class="col-6 col-xl-1 form-group">
+        {{ form.male|as_crispy_field }}
+    </div>
+</div>
+{% endblock person_component %}

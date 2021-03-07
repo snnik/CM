@@ -1,0 +1,14 @@
+{% block contacts_component %}
+{% load crispy_forms_tags %}
+<div class="form-row">
+    <div class="col-12 col-md-4 form-group">
+        {{ form.phone_mobile|as_crispy_field }}
+    </div>
+    <div class="col-12 col-md-4 form-group">
+        {{ form.phone|as_crispy_field }}
+    </div>
+    <div class="col-12 col-md-4 form-group">
+        {{ form.email|as_crispy_field }}
+    </div>
+</div>
+{% endblock contacts_component %}

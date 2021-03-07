@@ -1,0 +1,38 @@
+{% include 'person_manager/components/message_component.html' %}
+<form method="post">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-xs-2 col-5 d-block mx-auto">
+            <div class="row">
+                <div class="col header-h2">
+                    <h2>Карта №</h2>
+                </div>
+                <div class="col">
+                    {{ card.card_number}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    {% include 'person_manager/components/person_component.html' %}
+    {% include 'person_manager/components/document_component.html' with browsing=True %}
+    {% include 'person_manager/components/address_component.html' with browsing=True %}
+    {% include 'person_manager/components/contacts_component.html' %}
+    <div class="row">
+        <div class="col">
+            <a class="btn btn-icon float-right btn-success" href="{% url 'edit_person' id %}">
+                <span class="icon"><i class="fas fa-edit"></i></span>
+                Редактировать
+            </a>
+            <a class="btn btn-icon float-left btn-success mx-2" target="_blank" href="{% url 'print_card' id %}">
+                <span class="icon"><i class="fas fa-print"></i></span>
+                Печать
+            </a>
+            <a class="btn float-left btn-icon btn-success mx-2" target="_blank" href="{% url 'print_contract' id %}">
+                <span class="icon"><i class="fas fa-print"></i></span>
+                Договор
+            </a>
+        </div>
+    </div>
+</form>
+

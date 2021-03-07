@@ -1,0 +1,14 @@
+{% block search %}
+<form class="form-inline my-2 my-lg-0">
+    <div class="input-group mb-3 col">
+        <input type="text" class="form-control" placeholder="" aria-label="Example text with button addon" id="id_search_field"
+               aria-describedby="search_button" value="{{ search_param }}" name="search">
+        <div class="input-group-append">
+            <button class="btn btn-search form-control" id="search_button">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+
+</form>
+{% endblock %}

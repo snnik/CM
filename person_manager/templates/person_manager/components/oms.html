@@ -1,0 +1,13 @@
+{% block oms %}
+{% load crispy_forms_tags %}
+<div class="col-12 col-lg-6 offset-lg-2 offset-md-0">
+    <div class="row">
+        <div class="col-12 col-lg-6 form-group">
+            {{ form.oms_number|as_crispy_field }}
+        </div>
+        <div class="col-12 col-lg-6 form-group">
+            {{ form.oms_insurance_company|as_crispy_field }}
+        </div>
+    </div>
+</div>
+{% endblock oms %}

@@ -1,0 +1,119 @@
+{% include 'person_manager/components/message_component.html' %}
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex flex-row justify-content-between">
+            <div class="col">
+                <p class="text-center m-0"><small>Наименование медицинской организации</small></p>
+                <p class="text-center m-0"><strong>ООО Межрегиональная офтальмологическая клиника "Высокие
+                    технологии"</strong></p>
+                <hr class="m-0">
+                <p class="text-center mt-0">Адрес <u>г.Курск, ул.Дзержинского, д.4, офис 7.</u></p>
+            </div>
+            <div class="col-1"></div>
+            <div class="col">
+                <p class="text-right m-0"><small>Приложение №1</small></p>
+                <p class="text-right m-0"><small>к приказу Министерства здравоохранения РФ</small></p>
+                <p class="text-right m-0"><small>от 15 декабря 2014 г. N 834н</small></p>
+                <p class="text-right m-0"><small>Код формы по ОКУД _______________</small></p>
+                <p class="text-right m-0"><small>Код организации по ОКПО ____________</small></p>
+                <p class="text-right m-0"><small>Медицинская документация Учетная форма N 025/у</small></p>
+                <p class="text-right m-0"><small>(Утверждена приказом Минздрава России от 15 декабря 2014 г.
+                    N 834н)</small></p>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="d-flex flex-row justify-content-center">
+            <div class="col-5">
+                <h5 class="text-center">
+                    МЕДИЦИНСКАЯ КАРТА ПАЦИЕНТА, ПОЛУЧАЮЩЕГО МЕДИЦИНСКУЮ ПОМОЩЬ В АМБУЛАТОРНЫХ УСЛОВИЯХ N 
+                    <ins>{{object.card.card_number}}</ins>
+                </h5>
+            </div>
+        </div>
+        <div class="d-flex flex-row justify-content-start mb-1">
+            <div class="col-5">1. Дата заполнения медицинской карты: число</div>
+            <div class="col-1 border-bottom border-dark text-center"> {{object.card.join_date|date:"d"}}</div>
+            <div class="col-1">месяц</div>
+            <div class="col-2 border-bottom border-dark text-center">{{object.card.join_date|date:"E"}}</div>
+            <div class="col-1">год</div>
+            <div class="col-1 border-bottom border-dark text-center">{{object.card.join_date|date:"Y"}}</div>
+        </div>
+        <div class="d-flex flex-row justify-content-start mb-1">
+            <div class="col-3">2. Фамилия, имя, отчество</div>
+            <div class="col border-bottom border-dark ">{{ object }}</div>
+        </div>
+        <div class="d-flex flex-row justify-content-start mb-1">
+            <div class="col-3">3. Пол: муж. - 1, жен. - 2</div>
+            <div class="col-3">4. Дата рождения: число</div>
+            <div class="col-1 border-bottom border-dark text-center"> {{object.birthday|date:"d"}}</div>
+            <div class="col-1">месяц</div>
+            <div class="col-2 border-bottom border-dark text-center">{{object.birthday|date:"E"}}</div>
+            <div class="col-1">год</div>
+            <div class="col-1 border-bottom border-dark text-center">{{object.birthday|date:"Y"}}</div>
+        </div>
+        <div class="d-flex flex-row justify-content-start mb-1">
+            <div class="col-5">5. Место регистрации: субъект Российской Федерации</div>
+            <div class="col border-bottom border-dark ">{{address.district}}</div>
+        </div>
+        <div class="d-flex flex-row justify-content-start mb-1">
+            <div class="col-1">район</div>
+            <div class="col border-bottom border-dark">{{address.district}}</div>
+            <div class="col-1">город</div>
+            <div class="col border-bottom border-dark">{{address.city}}</div>
+            <div class="col-2">населенный пункт</div>
+            <div class="col border-bottom border-dark">{{address.location}}</div>
+        </div>
+        <div class="d-flex flex-row justify-content-start mb-1">
+            <div class="col-1">улица</div>
+            <div class="col border-bottom border-dark">{{address.street}}</div>
+            <div class="col-1">дом</div>
+            <div class="col-1 border-bottom border-dark">{{address.house}}</div>
+            <div class="col-2">квартира</div>
+            <div class="col-1 border-bottom border-dark">{{address.room|default:""}}</div>
+            <div class="col-1">тел.</div>
+            <div class="col-2 border-bottom border-dark">{{object.phone_mobile}}</div>
+        </div>
+        <div class="d-flex flex-row justify-content-start mb-1">
+            <div class="col">6. Местность: городская - 1, сельская - 2</div>
+        </div>
+        <div class="d-flex flex-row justify-content-start mb-1">
+            <div class="col-3">7. Полис ОМС: серия N</div>
+            <div class="col border-bottom border-dark"></div>
+            <div class="col-1">N</div>
+            <div class="col border-bottom border-dark">{{object.oms_number}}</div>
+            <div class="col-2">8. СНИЛС</div>
+            <div class="col border-bottom border-dark">{{object.snils_number}}</div>
+        </div>
+        <div class="d-flex flex-row justify-content-start mb-1">
+            <div class="col-5">Наименование страховой медицинской организации</div>
+            <div class="col border-bottom border-dark">{{object.oms_insurance_company}}</div>
+        </div>
+        <div class="d-flex flex-row justify-content-start mb-1">
+            <div class="col-3">10. Код категории льготы</div>
+            <div class="col border-bottom border-dark"></div>
+            <div class="col-2">11. Документ</div>
+            <div class="col border-bottom border-dark"></div>
+            <div class="col-1">: серия</div>
+            <div class="col border-bottom border-dark text-center">{{object.passport_series}}</div>
+            <div class="col-1">номер</div>
+            <div class="col border-bottom border-dark text-center">{{object.passport_number}}</div>
+        </div>
+    </div>
+    <div class="card-footer d-flex justify-content-around">
+
+        <a class="btn btn-icon float-left btn-success mx-2" target="_blank" href="{% url 'print_card' object.id %}">
+            <span class="icon"><i class="fas fa-print"></i></span>
+            Печать Карты
+        </a>
+        <a class="btn float-left btn-icon btn-success mx-2" target="_blank" href="{% url 'print_contract' object.id %}">
+            <span class="icon"><i class="fas fa-print"></i></span>
+            Печать Договора
+        </a>
+        <a class="btn btn-icon float-right btn-success" href="{% url 'edit_person' object.id %}">
+            <span class="icon"><i class="fas fa-edit"></i></span>
+            Редактировать Карту
+        </a>
+    </div>
+</div>
+

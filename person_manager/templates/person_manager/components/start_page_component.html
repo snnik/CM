@@ -1,0 +1,19 @@
+{% include 'person_manager/components/message_component.html' %}
+<div class="card start-page">
+    <div class="card-body">
+        <div class="d-flex flex-row justify-content-center">
+            <div class="col">
+                <h5 class="text-left text-muted">
+                    Нажмите "Добавить" для добавления карты.
+                </h5>
+            </div>
+            <div class="col">
+                <a class="btn btn-icon float-left btn-success mx-2" target="_blank"
+                   href="{% url 'create_person' %}">
+                    <span class="icon"><i class="far fa-plus-square"></i></span>
+                    Печать Карты
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

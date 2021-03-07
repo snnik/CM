@@ -1,0 +1,6 @@
+{% block paginator_choice %}
+<form class="form-inline my-2 my-lg-0" method="get" action="{% url 'persons_list' %}">
+    {{ paginate_form.list_field }}
+</form>
+{% endblock %}
+

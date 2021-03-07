@@ -1,0 +1,23 @@
+{% block message_component %}
+{% if messages %}
+{% for message in messages %}
+<div {% if message.tags %} class="alert {{message.tags}} alert-dismissible fade show" {% endif %} role="alert">
+    {{ message }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endfor %}
+{% endif %}
+
+{% if form.non_field_errors %}
+<div class="alert alert-danger" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    {% load crispy_forms_tags %}
+    {{ form.non_field_errors }}
+</div>
+{% endif %}
+
+{% endblock %}

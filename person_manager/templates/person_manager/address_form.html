@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+<div class="container">
+    <div class="card overflow-auto  px-0 my-4 shadow">
+        <div class="card-body">
+            <form method="post">{% csrf_token %}
+                <div class="row">
+                    <div class="col">
+                        {% for field in form %}
+                        <div class="form-group has-danger">
+                            <label for={{ field.id_for_label }}>{{ field.label }}</label>
+                            {{ field }}
+                            <small id={{ field.id_for_label }} class="form-text text-muted">
+                                {{ field.help_text }}
+                            </small>
+                            {% if field.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ field.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <button class="btn btn-primary btn-icon float-right" type="submit">
+                            <span class="icon"><i class="fas fa-arrow-circle-left"></i></span>
+                            Сохранить
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content%}

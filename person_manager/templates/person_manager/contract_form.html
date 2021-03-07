@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="alert alert-primary" role="alert" id="msg" style="display: none"></div>
+<form method="post" class="inline-form">
+    {% csrf_token %}
+
+    <div class="row">
+        <div class="col">
+            <a class="btn float-left btn-icon btn-success mx-2" href="{% url 'persons_list' %}">
+                <span class="icon"><i class="fas fa-arrow-circle-left"></i></span>
+                Назад
+            </a>
+            <button class="btn btn-success btn-icon float-right" type="submit">
+                <span class="icon"><i class="far fa-save"></i></span>
+                Сохранить
+            </button>
+            {% if id %}
+            <a class="btn float-left btn-icon btn-success mx-2" target="_blank" href="{% url 'print_card' id %}">
+                <span class="icon"><i class="fas fa-print"></i></span>
+                Печать Карты
+            </a>
+            <a class="btn float-left btn-icon btn-success mx-2" target="_blank" href="{% url 'print_contract' id %}">
+                <span class="icon"><i class="fas fa-print"></i></span>
+                Печать Договора
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</form>
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+            <div class="modal-footer" id="submitBlock">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content%}

@@ -1,0 +1,8 @@
+## The following requirements were added by pip freeze:
+asgiref
+Django
+django-crispy-forms
+Pillow
+pytz
+reportlab
+sqlparse

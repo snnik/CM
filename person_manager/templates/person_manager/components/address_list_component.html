@@ -1,0 +1,19 @@
+{% block address_component %}
+
+{% if browsing %}
+{% if address %}
+<div class="form-row">
+    <div class="col">
+        <ul class="list-unstyled">
+            {% for a in address %}
+            <li>{{ a.address_string }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% else %}
+<h5 class="text-center">Адреса не найдены</h5>
+{% endif %}
+{% endif %}
+
+{% endblock address_component %}

@@ -1,0 +1,16 @@
+*vscode/*
+.idea/*
+amenv/*
+venv/*
+.env
+*.pyc
+*~
+*test/*
+*.sqlite3
+*.log
+
+__pycache__/
+*/__pycache__/
+.DS_Store
+prj/*
+CM/settings.py

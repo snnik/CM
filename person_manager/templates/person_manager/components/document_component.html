@@ -1,0 +1,27 @@
+{% block document_component %}
+
+{% if create %}
+<div class="form-row">
+    {% include 'person_manager/components/snils.html' %}
+    {% include 'person_manager/components/oms.html' %}
+</div>
+<hr>
+{% include 'person_manager/components/passport.html' %}
+{% endif %}
+
+{% if browsing %}
+{% if documents %}
+<div class="form-row">
+    <div class="col">
+        <ul class="list-unstyled">
+            {% for document in documents %}
+            <li>{{ document }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% else %}
+<h5 class="text-center">Данные по документам не заполнены!</h5>
+{% endif %}
+{% endif %}
+{% endblock document_component %}
