@@ -28,12 +28,14 @@ registerFontFamily('Times', normal='Times', bold='TimesBd', italic='TimesIt', bo
 
 header_style = ParagraphStyle('Body', fontName='Times', fontSize=font_size, leading=10, spaceBefore=6,
                               alignment=TA_CENTER)
-header_style_right = ParagraphStyle('Body', fontName='Times', fontSize=font_size, leading=10, spaceBefore=6,
+header_style_right = ParagraphStyle('Body', fontName='Times', fontSize=font_size, leading=15, spaceBefore=6,
                                     alignment=TA_RIGHT)
-header_style_left = ParagraphStyle('Body', fontName='Times', fontSize=font_size, leading=10, spaceBefore=6,
+header_style_left = ParagraphStyle('Body', fontName='Times', fontSize=font_size, leading=15, spaceBefore=6,
                                    alignment=TA_LEFT)
 text_style = ParagraphStyle('Body', fontName='Times', fontSize=font_size, leading=10, spaceBefore=2,
                             alignment=TA_JUSTIFY)
+table_style = ParagraphStyle('Body', fontName='Times', fontSize=font_size, leading=15, spaceBefore=2,
+                             alignment=TA_JUSTIFY)
 list_style = ParagraphStyle('Body', fontName='Times', fontSize=font_size, leading=10, alignment=TA_JUSTIFY,
                             leftIndent=24)
 footer_style = ParagraphStyle('Body', fontName='Times', fontSize=font_size, leading=10, spaceBefore=6, leftIndent=24)
@@ -43,6 +45,7 @@ contract = []
 
 def format_data(pattern_text, template_data, data):
     data_dict = {}
+    pattern_dict = {}
     flag_string_find = False
     for item in template_data:
         pattern = '{' + str(item) + '}'
@@ -50,7 +53,7 @@ def format_data(pattern_text, template_data, data):
             # TODO:составить шаблон, вставить в исходный текст
             flag_string_find = True
             string_value = template_data[item][0]
-            string_length = int(len(pattern))
+            string_length = int(template_data[item][1])
             template = '{' + str(item) + ':_<' + str(string_length) + '}'
             pattern_text = pattern_text.replace(pattern, template)
             # TODO:составить словарь с данными для подстановки
@@ -91,7 +94,7 @@ def table_append(flag, dict_date, dict_data):
             elif i == 0 and j == 1 and flag[1] == 'city':
                 table_data = Paragraph(data, header_style_right)
             else:
-                table_data = Paragraph(data, text_style)
+                table_data = Paragraph(data, table_style)
             table_dict[i][j] = table_data
     if flag[1] == 'tbl':
         tbl = Table(table_dict, [0.7 * cm, 6.5 * cm, 1.8 * cm, 2.5 * cm, 2.5 * cm])
@@ -120,8 +123,11 @@ def get_dict(id):
 
     try:
         person = Person.objects.get(pk=id)
-        result_dict['patient'] = str(person)
-        result_dict['patient_short'] = '{f} {n}.{p}.'.format(f=str(person.last_name), n=str(person.first_name)[0:1],
+        result_dict['patient'] = '{f} {n} {p}'.format(f=str(person.last_name).capitalize().strip(),
+                                                      n=str(person.first_name).capitalize().strip(),
+                                                      p=str(person.patronymic_name).capitalize().strip())
+        result_dict['patient_short'] = '{f} {n}.{p}.'.format(f=str(person.last_name).capitalize(),
+                                                             n=str(person.first_name)[0:1],
                                                              p=str(person.patronymic_name)[0:1])
 
         result_dict['age'] = person.birthday
@@ -129,7 +135,7 @@ def get_dict(id):
         result_dict['card'] = card.card_number
         locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
         result_dict['dog_date'] = d.strftime('"%d" %B %Y г.')
-        
+
         if person.passport_series or person.passport_number:
             result_dict['passport_series'] = str(person.passport_series)
             result_dict['passport_number'] = str(person.passport_number)
@@ -190,7 +196,7 @@ def print_card(request, id):
 
     # Create the PDF object, using the response object as its "file."
     p = canvas.Canvas(response, pagesize=portrait(A4))
-    p.drawImage(settings.DOC_TEMPLATES + 'CARD.png', 0, 0, 210*mm, 297*mm)
+    p.drawImage(settings.DOC_TEMPLATES + 'CARD.png', 0, 0, 210 * mm, 297 * mm)
     p.setFont('Times New Roman', 11)
     person = Person()
     try:
@@ -256,87 +262,6 @@ def print_card(request, id):
     return response
 
 
-def print_contract_old(request, id):
-    # Create the HttpResponse object with the appropriate PDF headers.
-    pdfmetrics.registerFont(ttfonts.TTFont('Arial', settings.REPORT_FONTS + 'arial.ttf'))
-    pdfmetrics.registerFont(ttfonts.TTFont('Times New Roman', settings.REPORT_FONTS + 'Times New Roman.ttf'))
-    response = HttpResponse(content_type='application/pdf')
-    const_age = settings.UNDERAGE
-
-    try:
-        person = Person.objects.get(pk=id)
-        age = get_age(person.birthday)
-        if age > const_age:
-            template_name_p1 = 'contract_adult_p1.png'
-            template_name_p2 = 'contract_adult_p2.png'
-        else:
-            template_name_p1 = 'contract_not_adult_p1.png'
-            template_name_p2 = 'contract_not_adult_p2.png'
-
-        # Create the PDF object, using the response object as its "file."
-        p = canvas.Canvas(response, pagesize=landscape(A4))
-        p.drawImage(settings.DOC_TEMPLATES + template_name_p1, 0, 0, 297 * mm, 210 * mm)
-        p.setFont('Times New Roman', 9)
-
-        card = person.card
-        p.drawString(640, 536, str(card.card_number))  # номер договора fix 10/04/2020
-        locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
-        d = datetime.datetime.now()
-        p.drawString(725, 503, d.strftime('"%d" %B %Y г.'))
-        if age > const_age:
-            p.drawString(440, 314, str(person))
-            if len(str(person)) > 30:
-                if len(person.last_name + ' ' + person.first_name) > 30:
-                    p.drawString(253, 321, str(person.last_name))
-                    p.drawString(225, 302, person.first_name + ' ' + person.patronymic_name)
-                else:
-                    p.drawString(253, 321, person.last_name + ' ' + person.first_name)
-                    p.drawString(225, 302, person.patronymic_name)
-            else:
-                p.drawString(253, 321, str(person))
-            address = person.address_set.filter(type__type='REG').first()
-            if address:
-                if len(str(address)) > 38:
-                    p.drawString(250, 283, '{d},'.format(d=address.district))
-                    p.drawString(225, 265, 'город {c},'.format(c=address.city))
-                    p.drawString(225, 246, 'улица {s}, '.format(s=address.street))
-                    p.drawString(225, 228, 'дом {h} {kv}'.format(kv=', квартира ' +
-                                                                 str(address.room) if address.room else '',
-                                                                 h=address.house))
-                else:
-                    p.drawString(250, 283, str(address))
-            p.drawString(242, 208, str(person.phone_mobile))
-            p.drawString(335, 97, '{f} {n}.{p}.'.format(f=str(person.last_name), n=str(person.first_name)[0:1],
-                                                        p=str(person.patronymic_name)[0:1]))
-        else:
-            p.drawString(440, 275, str(person))
-
-        p.showPage()
-
-        p.drawImage(settings.DOC_TEMPLATES + template_name_p2, 0, 0, 297 * mm, 210 * mm)
-        p.setFont('Times New Roman', 9)
-        p.drawString(320, 532, str(d.strftime('"%d" %B %Y г.')))
-        if age > const_age:
-            p.drawString(162, 511, str(person))
-            p.drawString(55, 490, str(card.card_number))
-            p.drawString(60, 169, str(person))
-            if person.passport_series or person.passport_number:
-                p.drawString(140, 155, str(person.passport_series))
-                p.drawString(220, 155, str(person.passport_number))
-                p.drawString(90, 141, str(person.passport_issuing))
-                p.drawString(60, 127, str(person.passport_issue_code))
-                p.drawString(197, 127, person.passport_issue_date.strftime('"%d"'))
-                p.drawString(227, 127, person.passport_issue_date.strftime('%B'))
-                p.drawString(295, 127, person.passport_issue_date.strftime('%Y'))
-        else:
-            p.drawString(55, 490, str(card.card_number))
-        p.showPage()
-        p.save()
-    except ObjectDoesNotExist as e:
-        print(str(e))
-    return response
-
-
 def print_contract(request, id):
     # Create the HttpResponse object with the appropriate PDF headers.
     response = HttpResponse(content_type='application/pdf')
@@ -363,4 +288,3 @@ def print_contract(request, id):
     # build pdf stream
     doc.build(contract)
     return response
-
