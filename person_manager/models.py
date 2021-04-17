@@ -3,6 +3,10 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 User = get_user_model()
+# TODO: Добавление физического лица как объекта без учета документов
+# TODO: Выделить документы в отдельную сущность. Формат шаблона JSON, описание, GUID вместо кода
+# TODO: field validation in document type objects
+# TODO: conntacts: template validation
 
 
 class Person(models.Model):
@@ -82,6 +86,9 @@ class Person(models.Model):
             self.oms_number = None
         if not self.snils_number:
             self.snils_number = None
+        self.last_name = str(self.last_name).strip().capitalize()
+        self.first_name = str(self.first_name).strip().capitalize()
+        self.patronymic_name = str(self.patronymic_name).strip().capitalize()
         super().save(*args, **kwargs)
 
 
@@ -189,17 +196,23 @@ class Address(models.Model):
             errors['city'] = e.error_list
             errors['locality'] = e.error_list
         try:
-            if self.terrain == 1:
+            if self.terrain == '1':
                 if not self.city:
                     raise ValidationError('Указана городская местность, но поле "Город" не заполнено!')
+                if self.locality:
+                    raise ValidationError('Для городской местности необходимо заполнить поле "Город"!')
         except ValidationError as e:
             errors['city'] = e.error_list
+            errors['locality'] = e.error_list
         try:
-            if self.terrain == 2:
+            if self.terrain == '2':
                 if not self.locality:
                     raise ValidationError('Указана сельская местность, но поле "Населенный пункт" не заполнено!')
+                if self.city:
+                    raise ValidationError('Для сельской местности необходимо заполнить поле "Населенный пункт"!')
         except ValidationError as e:
             errors['locality'] = e.error_list
+            errors['city'] = e.error_list
         if errors:
             raise ValidationError(errors)
 

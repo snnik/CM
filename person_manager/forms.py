@@ -90,7 +90,9 @@ class PersonForm(forms.ModelForm):
 
 
 class AddressForm(forms.ModelForm):
-
+    # TODO процедура JS блок полей город/нас. пункт если одно из них заполнено
+    # TODO процедура JS блокировка поля город/нас.пункт в зависимости от terrain
+    # TODO смена
     class Meta:
         model = Address
         fields = ('district', 'city', 'locality',
