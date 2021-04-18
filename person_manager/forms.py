@@ -90,23 +90,24 @@ class PersonForm(forms.ModelForm):
 
 
 class AddressForm(forms.ModelForm):
-    # TODO процедура JS блок полей город/нас. пункт если одно из них заполнено
-    # TODO процедура JS блокировка поля город/нас.пункт в зависимости от terrain
-    # TODO смена
+
     class Meta:
         model = Address
         fields = ('district', 'city', 'locality',
                   'street', 'house', 'room', 'register_date', 'terrain')
         widgets = {
             'district': forms.TextInput(attrs={'class': 'form-control form-control-danger'}),
-            'city': forms.TextInput(attrs={'class': 'form-control form-control-danger'}),
-            'locality': forms.TextInput(attrs={'class': 'form-control form-control-danger'}),
+            'city': forms.TextInput(attrs={'class': 'form-control form-control-danger',
+                                           'onclick': 'onChangeEventInput(this);'}),
+            'locality': forms.TextInput(attrs={'class': 'form-control form-control-danger',
+                                               'onclick': 'onChangeEventInput(this);'}),
             'street': forms.TextInput(attrs={'class': 'form-control form-control-danger'}),
             'house': forms.TextInput(attrs={'class': 'form-control form-control-danger'}),
             'room': forms.TextInput(attrs={'class': 'form-control form-control-danger'}),
             'register_date': forms.DateInput(attrs={'class': 'form-control form-control-danger datepicker-here',
                                                     'required': False}),
-            'terrain': forms.Select(attrs={'class': 'form-control form-control-danger'}),
+            'terrain': forms.Select(attrs={'class': 'form-control form-control-danger',
+                                           'onchange': 'onChangeEventSelect(this);'}),
         }
 
 

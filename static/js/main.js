@@ -1,18 +1,3 @@
-var headertext = [],
-    headers = document.querySelectorAll(".responce-table th"),
-    tablerows = document.querySelectorAll(".responce-table th"),
-    tablebody = document.querySelector(".responce-table tbody");
-
-for (var i = 0; i < headers.length; i++) {
-    var current = headers[i];
-    headertext.push(current.textContent.replace(/\r?\n|\r/, ""));
-}
-for (var i = 0, row; row = tablebody.rows[i]; i++) {
-    for (var j = 0, col; col = row.cells[j]; j++) {
-        col.setAttribute("data-th", headertext[j]);
-    }
-}
-
 function escape(string) {
     var htmlEscapes = {
         '&': '&amp;',
@@ -25,7 +10,7 @@ function escape(string) {
     return string.replace(/[&<>"']/g, function(match) {
         return htmlEscapes[match];
     });
-};
+}
 
 function idvalue(){
   var elem = event.target;
@@ -89,10 +74,50 @@ function loadContent(uri){
     $(submitBtn).appendTo('#submitBlock');
 }
 
+function unblockedInputField(e){
+    e.readOnly = false;
+}
+
+function blockedInputField(e){
+    e.readOnly = true;
+    e.value = '';
+}
+
+function onChangeEventSelect(e){
+    var sIndex = e.selectedIndex;
+    if (sIndex === 0){
+        blockedObjectId = '#id_locality';
+        unblockedObjectId = '#id_city';
+    } else if (sIndex === 1){
+        blockedObjectId = '#id_city';
+        unblockedObjectId = '#id_locality';
+    }
+    blockedInputField(document.querySelector(blockedObjectId));
+    unblockedInputField(document.querySelector(unblockedObjectId));
+}
+
+function onChangeEventInput(e){
+    if (e.id === 'id_locality') {
+        blockedObjectId = '#id_city';
+        sIndex = 1;
+    } else if (e.id === 'id_city') {
+        blockedObjectId = '#id_locality';
+        sIndex = 0;
+    }
+    blockedInputField(document.querySelector(blockedObjectId));
+    selectObject = document.querySelector('#id_terrain');
+    selectObject.selectedIndex = sIndex;
+    //id_locality
+    //id_terrain
+}
+
 $(document).ready(function() {
     $('.nav-link-collapse').on('click', function() {
             $('.nav-link-collapse').not(this).removeClass('nav-link-show');
             $(this).toggleClass('nav-link-show');
         });
+
+
+
 });
 
