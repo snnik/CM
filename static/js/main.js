@@ -97,18 +97,19 @@ function onChangeEventSelect(e){
 }
 
 function onChangeEventInput(e){
-    if (e.id === 'id_locality') {
-        blockedObjectId = '#id_city';
-        sIndex = 1;
-    } else if (e.id === 'id_city') {
-        blockedObjectId = '#id_locality';
-        sIndex = 0;
+    if (!e.readOnly){
+
+        if (e.id === 'id_locality') {
+            blockedObjectId = '#id_city';
+            sIndex = 1;
+        } else if (e.id === 'id_city') {
+            blockedObjectId = '#id_locality';
+            sIndex = 0;
+        }
+        blockedInputField(document.querySelector(blockedObjectId));
+        selectObject = document.querySelector('#id_terrain');
+        selectObject.selectedIndex = sIndex;
     }
-    blockedInputField(document.querySelector(blockedObjectId));
-    selectObject = document.querySelector('#id_terrain');
-    selectObject.selectedIndex = sIndex;
-    //id_locality
-    //id_terrain
 }
 
 $(document).ready(function() {
@@ -120,4 +121,3 @@ $(document).ready(function() {
 
 
 });
-
