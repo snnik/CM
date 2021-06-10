@@ -70,11 +70,11 @@ class Person(models.Model):
     def get_documents(self):
         documents = []
         if self.passport_number and self.passport_series:
-            documents.append('Паспорт серия: ' + self.passport_series + ' номер: ' + self.passport_number)
+            documents.append('Паспорт серия: {s} номер: {n}'.format(s=self.passport_series, n=self.passport_number))
         if self.snils_number:
-            documents.append('СНИЛС номер: ' + self.snils_number)
+            documents.append('СНИЛС номер: {n}'.format(n=self.snils_number))
         if self.oms_number:
-            documents.append('ОМС номер: ' + self.oms_number)
+            documents.append('ОМС номер: {n}'.format(n=self.oms_number))
         return documents
 
     def save(self, *args, **kwargs):
@@ -168,17 +168,17 @@ class Address(models.Model):
     def set_address_string(self):
         self.address_string = ''
         if self.district:
-            self.address_string = self.district + ', '
+            self.address_string = '{d}, '.format(d=self.district)
         if self.city:
-            self.address_string += 'г. ' + self.city
+            self.address_string += 'г. {c}'.format(c=self.city)
         else:
             self.address_string += self.locality
         if self.street:
-            self.address_string += ', ул. ' + self.street
+            self.address_string += ', ул. {s}'.format(s=self.street)
         if self.house:
-            self.address_string += ', дом.' + str(self.house)
+            self.address_string += ', дом. {h}'.format(h=str(self.house))
         if self.room:
-            self.address_string += ', кв.' + str(self.room)
+            self.address_string += ', кв. {r}'.format(r=str(self.room))
 
     def save(self, *args, **kwargs):
         self.set_address_string()
