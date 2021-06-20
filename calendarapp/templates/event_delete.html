@@ -1,0 +1,13 @@
+<!-- templates/article_delete.html -->
+{% extends 'base.html' %}
+
+{% block title %}
+Event Delete
+{% endblock %}
+
+{% block content %}
+    <form action="" method="post">{% csrf_token %}
+        <p>Вы уверены что необходимо удалить событие?</p>
+        <button class="btn btn-danger ml-2" type="submit">Подтвердить</button>
+    </form>
+{% endblock content %}

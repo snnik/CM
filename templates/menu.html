@@ -26,11 +26,9 @@
                     <a href="{% url 'import_csv' %}">Реестр пациентов</a>
                 </li>
             </ul>
-
             <li>
-                <a href="#"><i class="fab fa-fort-awesome-alt fa-lg"></i>Календарь</a>
+                <a href="{% url 'calendar' %}"><i class="fab fa-fort-awesome-alt fa-lg"></i>Календарь</a>
             </li>
-
             <li data-toggle="collapse" data-target="#new" class="collapsed">
                 <a href="#"><i class="fas fa-user-tie fa-lg"></i>{{ user.username }}</a>
             </li>

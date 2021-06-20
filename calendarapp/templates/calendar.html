@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="clearfix ">
+	<a class="btn btn-success right mr-2" href="{% url 'calendar' %}?{{ next_month }} "> Следующий месяц </a>
+    <a class="btn btn-success right mr-2" href="{% url 'calendar' %}?{{ prev_month }}"> Предыдущий месяц </a>
+    <a class="btn btn-success right mr-2" href="{% url 'event_new' %}"> Добавить событие </a>
+</div>
+<div style="color: blueviolet;">
+    {{ calendar }}
+</div>
+{% endblock %}
