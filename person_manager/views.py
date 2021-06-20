@@ -5,10 +5,10 @@ from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DetailView
+from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
 from django.conf import settings
-from person_manager.models import Address, AddressType, Person
-from person_manager.forms import CardForm, PersonViewForm, PaginatorForm, FilterForm, PersonForm, AddressForm
+from person_manager.models import AddressType, Person
+from person_manager.forms import CardForm, PaginatorForm, FilterForm, PersonForm, AddressForm
 import logging
 import datetime
 
@@ -56,6 +56,7 @@ class PersonContent(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     template_name = 'person_manager/components/person_detail_component.html'
 
     def get_context_data(self, **kwargs):
+        kwargs['container_wrapper'] = "container"
         try:
             kwargs['address'] = self.object.address_set.get(type=AddressType.objects.get(type='REG'))
         except ObjectDoesNotExist:
@@ -110,7 +111,7 @@ class CreatePerson(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
                 instance.save()
                 if address_form.has_changed():
                     address = address_form.save(commit=False)
-                    if address.city or address.locality:
+                    if address.city or address.settlement:
                         address.type = AddressType.objects.get(type='REG')
                         address.person = instance
                         address.clean()
@@ -138,6 +139,7 @@ class EditPerson(LoginRequiredMixin, UpdateView):
         super().get_initial()
 
     def get_context_data(self, **kwargs):
+        kwargs['container_wrapper'] = "container"
         try:
             kwargs['address'] = AddressForm(instance=self.object.address_set.get(type=AddressType.objects.get(type='REG')))
         except ObjectDoesNotExist:
@@ -167,7 +169,7 @@ class EditPerson(LoginRequiredMixin, UpdateView):
                 instance.save()
                 if address_form.has_changed():
                     address = address_form.save(commit=False)
-                    if address.city or address.locality:
+                    if address.city or address.settlement:
                         if not address_form.instance.pk:
                             address.type = AddressType.objects.get(type='REG')
                         address.person = instance
@@ -181,3 +183,20 @@ class EditPerson(LoginRequiredMixin, UpdateView):
         logger.info('{d} Транзакция успешно заевршена. Изменен объект: {i}'
                     ';'.format(d=datetime.datetime.now(), i=str(instance)))
         return redirect(self.success_url)
+
+
+class DeletePerson(LoginRequiredMixin, DeleteView):
+    model = Person
+    login_url = reverse_lazy('login')
+    success_url = reverse_lazy('persons_list')
+    permission_required = ('person_manager.change_person', 'person_manager.view_person', 'person_manager.add_address',
+                           'person_manager.change_address', 'person_manager.view_address',
+                           'person_manager.view_addresstype', 'person_manager.view_card', 'person_manager.add_card',
+                           'person_manager.delete_person')
+
+    def get_context_data(self, **kwargs):
+        kwargs['container_wrapper'] = "container"
+        kwargs['id'] = self.object.pk
+        kwargs['title'] = 'Удалить карту'
+        kwargs['page_title'] = 'Регистратура'
+        return super().get_context_data(**kwargs)

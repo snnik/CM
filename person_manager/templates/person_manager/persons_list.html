@@ -1,14 +1,10 @@
 {% extends 'base.html' %}
-
 {% block content %}
 <div class="content flex-grow-1">
     <div class="d-flex flex-row justify-content-between">
-        <div class="col">
-        </div>
         <div class="col"></div>
-        <div class="col-4">
-            {% include 'person_manager/components/search_component.html' %}
-        </div>
+        <div class="col"></div>
+        <div class="col-4">{% include 'person_manager/components/search_component.html' %}</div>
     </div>
     <br>
     <div class="d-flex flex-row justify-content-start">
@@ -23,9 +19,7 @@
                 {% endfor %}
                 {% if object_list %}
                 <li class="text-center">
-                    <a href="{% url 'create_person' %}">
-                        <span class="icon"><i class="fas fa-plus"></i></span>
-                    </a>
+                    <a href="{% url 'create_person' %}"><span class="icon"><i class="fas fa-plus"></i></span></a>
                 </li>
                 {% endif %}
             </ul>
@@ -53,7 +47,7 @@
         </div>
     </div>
 </div>
-<div class="footer flex-grow-0">
+<div class="footer flex-grow mt-3">
     {% if is_paginated %}
     <nav aria-label="Page navigation">
         <ul class="pagination justify-content-center">

@@ -475,3 +475,7 @@ table.responce-table tbody tr:not(:last-child) {
     border: dashed 2px;
     border-color: #bfbfbf;
 }
+
+.b-height{
+  height: 100vh; /* ну или сколько нужно по макету */
+}

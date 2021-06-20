@@ -6,3 +6,6 @@ Pillow
 pytz
 reportlab
 sqlparse
+djangorestframework
+markdown
+django-filter

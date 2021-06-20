@@ -93,13 +93,14 @@ class AddressForm(forms.ModelForm):
 
     class Meta:
         model = Address
-        fields = ('district', 'city', 'locality',
+        fields = ('region', 'district', 'city', 'settlement',
                   'street', 'house', 'room', 'register_date', 'terrain')
         widgets = {
+            'region': forms.TextInput(attrs={'class': 'form-control form-control-danger'}),
             'district': forms.TextInput(attrs={'class': 'form-control form-control-danger'}),
             'city': forms.TextInput(attrs={'class': 'form-control form-control-danger',
                                            'onclick': 'onChangeEventInput(this);'}),
-            'locality': forms.TextInput(attrs={'class': 'form-control form-control-danger',
+            'settlement': forms.TextInput(attrs={'class': 'form-control form-control-danger',
                                                'onclick': 'onChangeEventInput(this);'}),
             'street': forms.TextInput(attrs={'class': 'form-control form-control-danger'}),
             'house': forms.TextInput(attrs={'class': 'form-control form-control-danger'}),
@@ -109,6 +110,14 @@ class AddressForm(forms.ModelForm):
             'terrain': forms.Select(attrs={'class': 'form-control form-control-danger',
                                            'onchange': 'onChangeEventSelect(this);'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.pk:
+            if self.instance.terrain == '1':
+                self.fields['settlement'].disabled = True
+            if self.instance.terrain == '2':
+                self.fields['city'].disabled = True
 
 
 class CardForm(forms.ModelForm):

@@ -86,11 +86,11 @@ function blockedInputField(e){
 function onChangeEventSelect(e){
     var sIndex = e.selectedIndex;
     if (sIndex === 0){
-        blockedObjectId = '#id_locality';
+        blockedObjectId = '#id_settlement';
         unblockedObjectId = '#id_city';
     } else if (sIndex === 1){
         blockedObjectId = '#id_city';
-        unblockedObjectId = '#id_locality';
+        unblockedObjectId = '#id_settlement';
     }
     blockedInputField(document.querySelector(blockedObjectId));
     unblockedInputField(document.querySelector(unblockedObjectId));
@@ -99,11 +99,11 @@ function onChangeEventSelect(e){
 function onChangeEventInput(e){
     if (!e.readOnly){
 
-        if (e.id === 'id_locality') {
+        if (e.id === 'id_settlement') {
             blockedObjectId = '#id_city';
             sIndex = 1;
         } else if (e.id === 'id_city') {
-            blockedObjectId = '#id_locality';
+            blockedObjectId = '#id_settlement';
             sIndex = 0;
         }
         blockedInputField(document.querySelector(blockedObjectId));
@@ -117,7 +117,4 @@ $(document).ready(function() {
             $('.nav-link-collapse').not(this).removeClass('nav-link-show');
             $(this).toggleClass('nav-link-show');
         });
-
-
-
 });

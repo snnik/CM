@@ -53,26 +53,26 @@
             <div class="col-1 border-bottom border-dark text-center">{{object.birthday|date:"Y"}}</div>
         </div>
         <div class="d-flex flex-row justify-content-start mb-1">
-            <div class="col-5">5. Место регистрации: субъект Российской Федерации</div>
-            <div class="col border-bottom border-dark ">{{address.district}}</div>
+            <div class="col-6">5. Место регистрации: субъект Российской Федерации</div>
+            <div class="col border-bottom border-dark ">{{address.region}}</div>
         </div>
         <div class="d-flex flex-row justify-content-start mb-1">
             <div class="col-1">район</div>
-            <div class="col border-bottom border-dark">{{address.district}}</div>
+            <div class="col border-bottom border-dark">{{address.district|default:""}}</div>
             <div class="col-1">город</div>
-            <div class="col border-bottom border-dark">{{address.city}}</div>
+            <div class="col border-bottom border-dark">{{address.city|default:""}}</div>
             <div class="col-2">населенный пункт</div>
-            <div class="col border-bottom border-dark">{{address.location}}</div>
+            <div class="col border-bottom border-dark">{{address.settlement|default:""}}</div>
         </div>
         <div class="d-flex flex-row justify-content-start mb-1">
             <div class="col-1">улица</div>
-            <div class="col border-bottom border-dark">{{address.street}}</div>
+            <div class="col border-bottom border-dark">{{address.street|default:""}}</div>
             <div class="col-1">дом</div>
-            <div class="col-1 border-bottom border-dark">{{address.house}}</div>
+            <div class="col-1 border-bottom border-dark">{{address.house|default:""}}</div>
             <div class="col-2">квартира</div>
             <div class="col-1 border-bottom border-dark">{{address.room|default:""}}</div>
             <div class="col-1">тел.</div>
-            <div class="col-2 border-bottom border-dark">{{object.phone_mobile}}</div>
+            <div class="col-2 border-bottom border-dark">{{object.phone_mobile|default:""}}</div>
         </div>
         <div class="d-flex flex-row justify-content-start mb-1">
             <div class="col">6. Местность: городская - 1, сельская - 2</div>
@@ -103,12 +103,16 @@
     <div class="card-footer d-flex justify-content-around">
 
         <a class="btn btn-icon float-left btn-success mx-2" target="_blank" href="{% url 'print_card' object.id %}">
-            <span class="icon"><i class="fas fa-print"></i></span>
+            <span class="icon"><i class="fas fa-address-card"></i></span>
             Печать Карты
         </a>
         <a class="btn float-left btn-icon btn-success mx-2" target="_blank" href="{% url 'print_contract' object.id %}">
             <span class="icon"><i class="fas fa-print"></i></span>
             Печать Договора
+        </a>
+        <a class="btn btn-icon float-right btn-danger" href="{% url 'delete_person' object.id %}">
+            <span class="icon"><i class="fas fa-trash"></i></span>
+            Удалить Карту
         </a>
         <a class="btn btn-icon float-right btn-success" href="{% url 'edit_person' object.id %}">
             <span class="icon"><i class="fas fa-edit"></i></span>

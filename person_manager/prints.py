@@ -134,7 +134,7 @@ def get_dict(id):
         card = person.card
         result_dict['card'] = card.card_number
         locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
-        result_dict['dog_date'] = d.strftime('"%d" %B %Y г.')
+        result_dict['dog_date'] = d.strftime('%d.%m.%Y г.')
 
         if person.passport_series or person.passport_number:
             result_dict['passport_series'] = str(person.passport_series)
@@ -142,10 +142,7 @@ def get_dict(id):
             result_dict['passport_issuing'] = \
                 '{issuer}, {issuer_code}'.format(issuer=str(person.passport_issuing),
                                                  issuer_code=str(person.passport_issue_code))
-            result_dict['passport_issue_date'] = \
-                '{d} {m} {y}'.format(d=person.passport_issue_date.strftime('"%d"'),
-                                     m=person.passport_issue_date.strftime('%B'),
-                                     y=person.passport_issue_date.strftime('%Y'))
+            result_dict['passport_issue_date'] = person.passport_issue_date.strftime('%d.%m.%Y')
         else:
             result_dict['passport_series'] = result_dict['passport_number'] = result_dict['passport_issuing'] = \
                 result_dict['passport_issue_date'] = ''
@@ -206,12 +203,12 @@ def print_card(request, id):
         # See the ReportLab documentation for the full list of functionality.
         p.drawString(405, 676, str(card.card_number))
         locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
-        p.drawString(312, 651, card.join_date.strftime('%B'))
+        p.drawString(350, 651, card.join_date.strftime('%m'))
         p.drawString(260, 651, str(card.join_date.day))
         p.drawString(420, 651, str(card.join_date.year))
         p.drawString(200, 637, person.last_name + ' ' + person.first_name
                      + ' ' + person.patronymic_name)
-        p.drawString(390, 622, person.birthday.strftime('%B'))
+        p.drawString(420, 622, person.birthday.strftime('%m'))
         p.drawString(330, 622, str(person.birthday.day))
         p.drawString(500, 622, str(person.birthday.year))
         p.drawString(463, 579, person.phone_mobile)
@@ -230,10 +227,10 @@ def print_card(request, id):
 
     address = person.address_set.filter(type__type='REG').first()
     if address:
-        p.drawString(320, 608, address.district)
-        p.drawString(72, 594, '')  # район прописать
+        p.drawString(320, 608, address.region)
+        p.drawString(72, 594, address.district)
         p.drawString(235, 594, address.city)
-        p.drawString(445, 594, address.locality)
+        p.drawString(445, 594, address.settlement)
         p.drawString(72, 579, address.street)
         p.drawString(310, 579, str(address.house))
         p.drawString(405, 579, str(address.room))

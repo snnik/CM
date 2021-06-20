@@ -64,8 +64,9 @@ class Person(models.Model):
     def get_absolute_url(self):
         return reverse('edit_person', args=[str(self.pk)])
 
-    def delete(self, using=None, keep_parents=False):
+    def delete(self, *args, **kwargs):
         self.is_delete = True
+        super().save(*args, **kwargs)
 
     def get_documents(self):
         documents = []
@@ -143,20 +144,45 @@ class Address(models.Model):
 
     type = models.ForeignKey('person_manager.AddressType', on_delete=models.CASCADE, null=True, blank=True,
                              verbose_name='Тип адреса', help_text='Выберите тип адреса: Регистрация/Место пребывания')
-    address_string = models.TextField(blank=True, verbose_name='Адрес строкой')
-    district = models.CharField(max_length=50, blank=True, verbose_name='Регион')
+    region = models.CharField(max_length=50, blank=True, verbose_name='Область')
+    district = models.CharField(max_length=50, blank=True, verbose_name='Район')
     city = models.CharField(max_length=50, blank=True, verbose_name='Город')
-    locality = models.CharField(max_length=50, blank=True, verbose_name='Населенный пункт')
+    settlement = models.CharField(max_length=50, blank=True, verbose_name='Населенный пункт')
     street = models.CharField(max_length=50, blank=True, verbose_name='Улица')
     house = models.CharField(blank=True, verbose_name='Дом', max_length=10)
     room = models.CharField(blank=True, verbose_name='Квартира', max_length=10)
     terrain = models.CharField(max_length=1, choices=terrain, default=CITY, verbose_name='Местность')
     register_date = models.DateField(blank=True, null=True, verbose_name='Дата регистрации')
     person = models.ForeignKey('person_manager.person', blank=True, null=True, on_delete=models.CASCADE)
-    # район добавить
 
     def __str__(self):
-        return "{name}".format(name=str(self.address_string))
+        address_string = ''
+
+        if self.terrain == '1':
+            if self.region:
+                address_string = ','.join([self.region, self.city])
+            else:
+                address_string = self.city
+
+        if self.terrain == '2':
+            if self.region:
+                address_string = self.region
+                if self.district:
+                    address_string = ', '.join([address_string, self.district, self.settlement])
+                else:
+                    address_string = ', '.join([address_string, self.settlement])
+            elif self.district:
+                address_string = ', '.join([self.district, self.settlement])
+            else:
+                address_string = self.settlement
+
+        if self.street:
+            address_string = ', '.join([address_string, self.street])
+        if self.house:
+            address_string = ', '.join([address_string, str(self.house)])
+        if self.room:
+            address_string = ', '.join([address_string, str(self.room)])
+        return address_string
 
     def is_registration_address(self):
         t = self.type
@@ -165,54 +191,39 @@ class Address(models.Model):
         else:
             return False
 
-    def set_address_string(self):
-        self.address_string = ''
-        if self.district:
-            self.address_string = '{d}, '.format(d=self.district)
-        if self.city:
-            self.address_string += 'г. {c}'.format(c=self.city)
-        else:
-            self.address_string += self.locality
-        if self.street:
-            self.address_string += ', ул. {s}'.format(s=self.street)
-        if self.house:
-            self.address_string += ', дом. {h}'.format(h=str(self.house))
-        if self.room:
-            self.address_string += ', кв. {r}'.format(r=str(self.room))
-
-    def save(self, *args, **kwargs):
-        self.set_address_string()
-        return super(Address, self).save(*args, **kwargs)
-
     def clean_fields(self, exclude=None):
         super(Address, self).clean_fields()
         errors = {}
+
         try:
-            if not self.city and not self.locality:
+            if not self.city and not self.settlement:
                 raise ValidationError('Заполните поле "Город" или "Населенный пункт"!')
-            if self.city and self.locality:
+            if self.city and self.settlement:
                 raise ValidationError('Необходимо заполнить поле "Город" или "Населенный пункт"!')
         except ValidationError as e:
             errors['city'] = e.error_list
-            errors['locality'] = e.error_list
+            errors['settlement'] = e.error_list
+
         try:
             if self.terrain == '1':
                 if not self.city:
                     raise ValidationError('Указана городская местность, но поле "Город" не заполнено!')
-                if self.locality:
+                if self.settlement:
                     raise ValidationError('Для городской местности необходимо заполнить поле "Город"!')
         except ValidationError as e:
             errors['city'] = e.error_list
-            errors['locality'] = e.error_list
+            errors['settlement'] = e.error_list
+
         try:
             if self.terrain == '2':
-                if not self.locality:
+                if not self.settlement:
                     raise ValidationError('Указана сельская местность, но поле "Населенный пункт" не заполнено!')
                 if self.city:
                     raise ValidationError('Для сельской местности необходимо заполнить поле "Населенный пункт"!')
         except ValidationError as e:
-            errors['locality'] = e.error_list
+            errors['settlement'] = e.error_list
             errors['city'] = e.error_list
+
         if errors:
             raise ValidationError(errors)
 

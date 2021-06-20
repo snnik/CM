@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<form class="container" method="post">{% csrf_token %}
+    <div class="form-group">
+        <p class="h2">Вы уверены что хотите удалить карточку "{{ object }}"?</p>
+    </div>
+    <button type="submit" class="btn btn-icon float-right btn-success">
+        <span class="icon"><i class="fas fa-check"></i></span>
+        Подтвердить
+    </button>
+</form>
+{% endblock %}
