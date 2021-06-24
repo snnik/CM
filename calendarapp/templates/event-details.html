@@ -12,24 +12,24 @@ Event Details
         </div>
         
         <div class="clearfix">
-            <h3>Event Name: {{ event.title }}</h3>
-            <p>From <span style="color: gray;">{{ event.start_time }}</span> To <span style="color: gray;">{{ event.end_time }}</span></p>
+            <h3>Наименование: {{ event.title }}</h3>
+            <p>Начать <span style="color: gray;">{{ event.start_time }}</span> Закончить <span style="color: gray;">{{ event.end_time }}</span></p>
             <hr>
             <p>{{ event.description }}</p>
         </div>
         <hr>
         <div class="clearfix">
-            <h4 class="left" > Состав события</h4>
+            <h4 class="left" > Участники</h4>
             <a class="btn btn-success right" href="{% url 'add_eventmember' event.id %}"> Добавить </a>
         </div>
         <table class="table table-bordered">
             <thead>                  
                 <tr>
                   <th style="width: 10px">#</th>
-                  <th>Name</th>
-                  <th>Username</th>
+                  <th>Имя</th>
+                  <th>Логин</th>
                   <th>Email</th>
-                  <th>Action</th>
+                  <th>Действие</th>
                 </tr>
               </thead>
               <tbody>

@@ -48,6 +48,14 @@ class PersonsList(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         return queryset.order_by('-card__join_date')
 
 
+class PersonTable(PersonsList):
+    template_name = 'person_manager/person_table.html'
+
+    def get_queryset(self):
+        queryset = Person.objects.all()
+        return queryset
+
+
 class PersonContent(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     model = Person
     login_url = reverse_lazy('login')
@@ -141,11 +149,12 @@ class EditPerson(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         kwargs['container_wrapper'] = "container"
         try:
-            kwargs['address'] = AddressForm(instance=self.object.address_set.get(type=AddressType.objects.get(type='REG')))
+            kwargs['address'] = \
+                AddressForm(instance=self.object.address_set.get(type=AddressType.objects.get(type='REG')))
         except ObjectDoesNotExist:
             kwargs['address'] = AddressForm()
         kwargs['id'] = self.object.pk
-        kwargs['title'] = 'Изменить карту'
+        kwargs['title'] = 'Изменение карты'
         kwargs['page_title'] = 'Регистратура'
         kwargs['card'] = CardForm(instance=self.object.card)
         return super().get_context_data(**kwargs)

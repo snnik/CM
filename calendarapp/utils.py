@@ -1,12 +1,13 @@
 # calendarapp/utils.py
-from calendar import HTMLCalendar
+from calendar import LocaleHTMLCalendar
 from .models import Event
 
 
-class Calendar(HTMLCalendar):
+class Calendar(LocaleHTMLCalendar):
 	def __init__(self, year=None, month=None):
 		self.year = year
 		self.month = month
+		self.locale = 'Russian_Russia'
 		super(Calendar, self).__init__()
 
 	# formats a day as a td
