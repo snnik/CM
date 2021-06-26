@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import redirect
@@ -167,7 +167,7 @@ class EditPerson(LoginRequiredMixin, UpdateView):
 
         if not form.is_valid():
             form.add_error(None, form.errors)
-            return self.form_invalid(form)
+            raise ValidationError("Ошибка валидации формы!")
         instance = form.save(commit=False)
         try:
             with transaction.atomic():

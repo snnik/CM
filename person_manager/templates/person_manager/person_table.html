@@ -7,7 +7,7 @@
         <div class="col-4">{% include 'person_manager/components/search_component.html' %}</div>
     </div>
     <br>
-    <div class="d-flex flex-row justify-content-start">
+    <div class="container d-flex flex-row justify-content-start">
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -26,11 +26,10 @@
                     <td>{{p.last_name}} {{ p.first_name }} {{p.patronymic_name}}</td>
                     <td>{{ p.male }}</td>
                     <td>{{ p.birthday }}</td>
-                    <td>{{ p.address__related_name }}</td>
-                    <td>{{ p.oms_insurance_company }}</td>
+                    <td>{{ p.address__city }}</td>
+                    <td>{{ p.oms_insurance_company__name }}</td>
                     <td>{{ p.oms_number }}</td>
                     <td>{{ p.passport_number }}</td>
-
                 </tr>
                 {% endfor %}
             </tbody>
@@ -81,5 +80,16 @@
         </ul>
     </nav>
     {% endif %}
+</div>
+<div class="container flex-grow-1 mt-3">
+    <a class="btn float-left btn-icon btn-success mx-2" href="{% url 'persons_list' %}">
+        <span class="icon"><i class="fas fa-arrow-circle-left"></i></span>
+        Назад
+    </a>
+
+    <a class="btn float-right btn-icon btn-success mx-2" target="_blank" href="{% url 'import_csv' %}">
+        <span class="icon"><i class="fas fa-address-card"></i></span>
+        Save CSV
+    </a>
 </div>
 {% endblock %}

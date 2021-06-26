@@ -75,11 +75,11 @@ function loadContent(uri){
 }
 
 function unblockedInputField(e){
-    e.readOnly = false;
+    e.disabled = false;
 }
 
 function blockedInputField(e){
-    e.readOnly = true;
+    e.disabled = true;
     e.value = '';
 }
 
@@ -98,7 +98,6 @@ function onChangeEventSelect(e){
 
 function onChangeEventInput(e){
     if (!e.readOnly){
-
         if (e.id === 'id_settlement') {
             blockedObjectId = '#id_city';
             sIndex = 1;
