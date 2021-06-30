@@ -103,7 +103,7 @@ def table_append(flag, dict_date, dict_data):
     if flag[1] == 'tbl':
         tbl = Table(table_dict, [0.7 * cm, 6.5 * cm, 1.8 * cm, 2.5 * cm, 2.5 * cm])
         tbl.setStyle(TableStyle([
-            ('FONT', (0, 0), (-1, -1), 'Times', 6),
+            ('FONT', (0, 0), (-1, -1), 'Times', 5),
             ('VALIGN', (0, 0), (-1, -1), 'TOP'),
             ('INNERGRID', (0, 0), (-1, -1), 0.25, black),
             ('BOX', (0, 0), (-1, -1), 0.25, black),
@@ -112,7 +112,7 @@ def table_append(flag, dict_date, dict_data):
     else:
         tbl = Table(table_dict, len(table_dict) * [6.4 * cm], spaceBefore=3, spaceAfter=3)
         tbl.setStyle(TableStyle([
-            ('FONT', (0, 0), (-1, -1), 'Times', 6),
+            ('FONT', (0, 0), (-1, -1), 'Times', 5),
             ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
             ('TOPPADDING', (0, 0), (-1, -1), 0),
             ('VALIGN', (0, 0), (-1, -1), 'TOP'),
