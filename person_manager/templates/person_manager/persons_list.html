@@ -19,7 +19,9 @@
                 {% endfor %}
                 {% if object_list %}
                 <li class="text-center">
-                    <a href="{% url 'create_person' %}"><span class="icon"><i class="fas fa-plus"></i></span></a>
+                    <a href="{% url 'create_person' %}">
+                        <div><span class="icon"><i class="fas fa-plus"></i></span></div>
+                    </a>
                 </li>
                 {% endif %}
             </ul>
