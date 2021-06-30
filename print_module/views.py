@@ -1,7 +1,8 @@
 import locale
 import datetime
 import importlib
-from person_manager import dog_template
+from django.views.generic import FormView
+from print_module import dog_template
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.conf import settings
@@ -18,6 +19,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from reportlab.platypus import BaseDocTemplate, Frame, PageTemplate, Paragraph, TableStyle, Table, FrameBreak
 from person_manager.models import Person
+from print_module.forms import ContractForm
 
 font_size = 8
 pdfmetrics.registerFont(TTFont('Times', settings.REPORT_FONTS + 'Times New Roman_N.ttf'))
@@ -41,6 +43,8 @@ list_style = ParagraphStyle('Body', fontName='Times', fontSize=font_size, leadin
 footer_style = ParagraphStyle('Body', fontName='Times', fontSize=font_size, leading=10, spaceBefore=6, leftIndent=24)
 
 contract = []
+
+const_age = settings.UNDERAGE
 
 
 def format_data(pattern_text, template_data, data):
@@ -116,9 +120,8 @@ def table_append(flag, dict_date, dict_data):
     return tbl
 
 
-def get_dict(id):
-    const_age = settings.UNDERAGE
-    d = datetime.datetime.now()
+def get_dict(id, date_contract):
+    d = date_contract
     result_dict = {}
 
     try:
@@ -260,9 +263,12 @@ def print_card(request, id):
 
 
 def print_contract(request, id):
-    # Create the HttpResponse object with the appropriate PDF headers.
     response = HttpResponse(content_type='application/pdf')
-    dict_data = get_dict(id)
+    return create_pdf_object(response, id)
+
+
+def create_pdf_object(response, id, date_contract=datetime.datetime.now()):
+    dict_data = get_dict(id, date_contract)
     template_contract = get_template(dict_data['age'])
 
     doc = BaseDocTemplate(response, pagesize=landscape(A4))
@@ -285,3 +291,37 @@ def print_contract(request, id):
     # build pdf stream
     doc.build(contract)
     return response
+
+
+class RepresentView(FormView):
+    form_class = ContractForm
+    template_name = 'print_module/init_contract.html'
+    success_url = '/'
+
+    def get_context_data(self, **kwargs):
+        kwargs['container_wrapper'] = "container"
+        kwargs['title'] = 'Параметры договора'
+        kwargs['page_title'] = 'Регистратура'
+        return super().get_context_data(**kwargs)
+
+    def get_object_id(self):
+        return self.kwargs.pop('pk', None)
+
+    def get_initial(self):
+        initial = super(RepresentView, self).get_initial()
+        object_id = self.get_object_id()
+        if object_id:
+            try:
+                initial.update({'person_contract': Person.objects.get(pk=object_id)})
+            except Person.DoesNotExist:
+                initial.update({'person_contract': ''})
+        return initial
+
+    def post(self, request, *args, **kwargs):
+        response = HttpResponse(content_type='application/pdf')
+        form = self.form_class(self.request.POST)
+        if form.is_valid():
+            date_contract = datetime.datetime.strptime(form.cleaned_data['date_contract'], '%d.%m.%Y')
+            return create_pdf_object(response, self.get_object_id(), date_contract)
+        else:
+            return self.form_invalid(form)

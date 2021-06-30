@@ -115,9 +115,9 @@ class AddressForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.instance.pk:
             if self.instance.terrain == '1':
-                self.fields['settlement'].disabled = True
+                self.fields['settlement'].widget.attrs['readonly'] = True
             if self.instance.terrain == '2':
-                self.fields['city'].disabled = True
+                self.fields['city'].widget.attrs['readonly'] = True
 
 
 class CardForm(forms.ModelForm):

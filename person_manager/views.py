@@ -143,9 +143,6 @@ class EditPerson(LoginRequiredMixin, UpdateView):
                            'perosn_manager.change_address', 'person_manager.view_address',
                            'person_manager.view_addresstype', 'person_manager.view_card', 'person_manager.add_card')
 
-    def get_initial(self):
-        super().get_initial()
-
     def get_context_data(self, **kwargs):
         kwargs['container_wrapper'] = "container"
         try:

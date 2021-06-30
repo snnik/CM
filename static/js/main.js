@@ -75,11 +75,11 @@ function loadContent(uri){
 }
 
 function unblockedInputField(e){
-    e.disabled = false;
+    e.readOnly = false;
 }
 
 function blockedInputField(e){
-    e.disabled = true;
+    e.readOnly = true;
     e.value = '';
 }
 

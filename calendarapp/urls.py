@@ -10,4 +10,4 @@ urlpatterns = [
     path('event/<int:event_id>/details/', views.event_details, name='event-detail'),
     path('add_eventmember/<int:event_id>', views.add_eventmember, name='add_eventmember'),
     path('event/<int:pk>/remove', views.EventMemberDeleteView.as_view(), name="remove_event"),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

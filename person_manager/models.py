@@ -53,6 +53,7 @@ class Person(models.Model):
     oms_insurance_company = models.ForeignKey(to='person_manager.HealthInsuranceCompany',
                                               on_delete=models.CASCADE, verbose_name='Организация, выдавшая ОМС',
                                               blank=True, default=-1)
+    # representative = models.ForeignKey('self', on_delete=models.DO_NOTHING, verbose_name='Представитель', blank=True)
     create_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now=True)
     is_delete = models.BooleanField(default=False)
@@ -160,7 +161,7 @@ class Address(models.Model):
 
         if self.terrain == '1':
             if self.region:
-                address_string = ','.join([self.region, self.city])
+                address_string = ', '.join([self.region, self.city])
             else:
                 address_string = self.city
 
