@@ -8,12 +8,12 @@ class EventForm(ModelForm):
         model = Event
         # datetime-local is a HTML5 input type, format to make date time show on fields
         widgets = {
-          'start_time': CharField(attrs={'type': 'datetime-local',
-                                         'class': 'form-control form-control-danger datepicker-here',
+          'start_time': DateInput(attrs={'type': 'datetime-local',
+                                         'class': 'form-control form-control-danger',
                                          'data-timepicker': 'true'},
                                   format='%d.%m.%Y %H:%M'),
-          'end_time': CharField(attrs={'type': 'datetime-local',
-                                       'class': 'form-control form-control-danger datepicker-here',
+          'end_time': DateInput(attrs={'type': 'datetime-local',
+                                       'class': 'form-control form-control-danger',
                                        'data-timepicker': 'true'},
                                 format='%d.%m.%Y %H:%M'),
         }
