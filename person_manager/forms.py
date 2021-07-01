@@ -127,7 +127,7 @@ class CardForm(forms.ModelForm):
         fields = ('card_number', 'join_date', )
         widgets = {
             'card_number': forms.TextInput(attrs={'class': 'form-control form-control-danger'}),
-            'join_date': forms.DateInput(attrs={'class': 'form-control form-control-danger datepicker-here'}),
+            'join_date': forms.DateInput(attrs={'class': 'form-control form-control-danger date datepicker-here'}),
         }
 
     def __init__(self, *args, **kwargs):

@@ -10,12 +10,10 @@ class EventForm(ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control form-control-danger'}),
             'description': forms.Textarea(attrs={'class': 'form-control form-control-danger', 'rows': '10'}),
-            'start_time': forms.TextInput(attrs={'type': 'datetime-local',
-                                         'class': 'form-control form-control-danger date datepicker-here',
-                                         'data-timepicker': 'true'}),
-            'end_time': forms.TextInput(attrs={'type': 'datetime-local',
-                                       'class': 'form-control form-control-danger datepicker-here',
-                                       'data-timepicker': 'true'}),
+            'start_time': forms.TextInput(attrs={'class': 'form-control form-control-danger datepicker-here',
+                                                 'data-timepicker': 'true'}),
+            'end_time': forms.TextInput(attrs={'data-timepicker': 'true',
+                                               'class': 'form-control form-control-danger datepicker-here'}),
         }
         exclude = ['user']
 
