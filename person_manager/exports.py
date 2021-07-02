@@ -1,12 +1,6 @@
 import csv
 from django.http import HttpResponse
-from csv_export.views import CSVExportView
 from person_manager.models import Person
-
-
-class DataExportView(CSVExportView):
-    model = Person
-    fields = '__all__'
 
 
 def export_csv(request):

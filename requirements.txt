@@ -1,6 +1,8 @@
 ## The following requirements were added by pip freeze:
 asgiref
 Django
+gunicorn
+psycopg2
 django-crispy-forms
 Pillow
 pytz

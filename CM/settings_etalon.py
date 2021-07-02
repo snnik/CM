@@ -20,13 +20,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '3l0u=f&2t$4iv(8+gr_l4s9i9wyb@628p&$7ce%9xe!u46@b-x'
+SECRET_KEY = ''
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -40,6 +39,8 @@ INSTALLED_APPS = [
     'person_manager',
     'auth_manager',
     'crispy_forms',
+    'calendarapp',
+    'print_module',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -87,6 +88,7 @@ DATABASES = {
     }
 }
 
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -168,18 +170,45 @@ LOGGING = {
     },
     'handlers': {
         'file': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename':  os.path.join(BASE_DIR, 'log/debug.log'),
+            'filename':  os.path.join(BASE_DIR, 'log/CM.log'),
             'formatter': 'verbose'
+        },
+        'debug': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+        'console': {
+            'class': 'logging.StreamHandler',
         },
     },
 
     'loggers': {
         'django': {
-            'level': 'DEBUG',
+            'level': 'INFO',
+            'handlers': ['console'],
+            'propagate': True,
+        },
+        'auth_manager': {
+            'level': 'INFO',
+            'handlers': ['file'],
+            'propagate': True,
+        },
+        'person_manager': {
+            'level': 'INFO',
             'handlers': ['file'],
             'propagate': True,
         },
     },
 }
+
+PAGINATE = 4
+
+# contract settings
+UNDERAGE = 14
+
+DEFAULT_CHARSET = 'utf-8'
+
+AUTH_USER_MODEL = 'auth.User'
