@@ -38,7 +38,7 @@ def next_month(d):
 
 
 class CalendarView(LoginRequiredMixin, generic.ListView):
-    login_url = 'signup'
+    login_url = 'login'
     model = Event
     template_name = 'calendar.html'
 
@@ -56,7 +56,7 @@ class CalendarView(LoginRequiredMixin, generic.ListView):
         return context
 
 
-@login_required(login_url='signup')
+@login_required(login_url='login')
 def create_event(request):    
     form = EventForm(request.POST or None)
     if request.POST and form.is_valid():

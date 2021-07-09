@@ -5,6 +5,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
 from django.conf import settings
 from person_manager.models import AddressType, Person
@@ -86,8 +87,7 @@ class CreatePerson(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     login_url = reverse_lazy('login')
     success_url = reverse_lazy('persons_list')
     template_name = 'person_manager/person_form.html'
-    permission_required = ('person_manager.add_person', 'person_manager.add_address', 'person_manager.view_addresstype',
-                           'person_manager.add_card')
+    permission_required = ('person_manager.add_person', 'person_manager.add_address', 'person_manager.add_card')
 
     def get_context_data(self, **kwargs):
         kwargs['address'] = AddressForm()
@@ -115,7 +115,6 @@ class CreatePerson(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
                 card.save()
                 instance.card = card
                 instance.clean()
-                # instance.user_id = self.request.user.pk
                 instance.save()
                 if address_form.has_changed():
                     address = address_form.save(commit=False)
@@ -139,9 +138,7 @@ class EditPerson(LoginRequiredMixin, UpdateView):
     form_class = PersonForm
     login_url = reverse_lazy('login')
     success_url = reverse_lazy('persons_list')
-    permission_required = ('person_manager.change_person', 'person_manager.view_person', 'person_manager.add_address',
-                           'perosn_manager.change_address', 'person_manager.view_address',
-                           'person_manager.view_addresstype', 'person_manager.view_card', 'person_manager.add_card')
+    permission_required = ('person_manager.change_person', 'person_manager.add_address', 'person_manager.change_address')
 
     def get_context_data(self, **kwargs):
         kwargs['container_wrapper'] = "container"
@@ -195,10 +192,7 @@ class DeletePerson(LoginRequiredMixin, DeleteView):
     model = Person
     login_url = reverse_lazy('login')
     success_url = reverse_lazy('persons_list')
-    permission_required = ('person_manager.change_person', 'person_manager.view_person', 'person_manager.add_address',
-                           'person_manager.change_address', 'person_manager.view_address',
-                           'person_manager.view_addresstype', 'person_manager.view_card', 'person_manager.add_card',
-                           'person_manager.delete_person')
+    permission_required = ('person_manager.delete_person',)
 
     def get_context_data(self, **kwargs):
         kwargs['container_wrapper'] = "container"
@@ -206,3 +200,20 @@ class DeletePerson(LoginRequiredMixin, DeleteView):
         kwargs['title'] = 'Удалить карту'
         kwargs['page_title'] = 'Регистратура'
         return super().get_context_data(**kwargs)
+
+
+class PersonView(View):
+    forms = None
+    template = None
+
+    def get_queryset(self, id):
+        pass
+
+    def get_forms(self):
+        pass
+
+    def get(self):
+        pass
+
+    def post(self):
+        pass

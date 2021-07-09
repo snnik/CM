@@ -9,6 +9,43 @@ User = get_user_model()
 # TODO: conntacts: template validation
 
 
+class Male(models.Model):
+    code = models.CharField(max_length=5)
+    name = models.CharField(max_length=10)
+
+
+class DocumentType(models.Model):
+    code = models.CharField(max_length=10)
+    name = models.CharField(max_length=20)
+
+
+class Passport(models.Model):
+    class Meta:
+        unique_together = [['series', 'number'], ]
+
+    type = models.ForeignKey('person_manager.DocumentType', on_delete=models.CASCADE)
+    series = models.CharField(max_length=5, blank=True, null=True, verbose_name='Серия документа')
+    number = models.CharField(blank=True, max_length=10, null=True, verbose_name='Номер документа')
+    issuing = models.TextField(blank=True, verbose_name='Кем выдан')
+    issue_code = models.CharField(blank=True, verbose_name='Код подразделения', max_length=7)
+    issue_date = models.DateField(blank=True, null=True, verbose_name='Дата выдачи')
+    issue_country = models.CharField(max_length=30, blank=True, verbose_name='Страна',
+                                              default='Российская федерация')
+
+
+class SNILS(models.Model):
+    number = models.CharField(blank=True, null=True, unique=True, max_length=14, verbose_name='Номер СНИЛС')
+    person_id = models.IntegerField()
+
+
+class OMS(models.Model):
+    number = models.CharField(blank=True, null=True, unique=True, max_length=16, verbose_name='Номер ОМС')
+    insurance_company = models.ForeignKey(to='person_manager.HealthInsuranceCompany',
+                                              on_delete=models.CASCADE, verbose_name='Организация, выдавшая ОМС',
+                                              blank=True, default=-1)
+    person_id = models.IntegerField()
+
+
 class Person(models.Model):
 
     class Meta:
@@ -17,8 +54,8 @@ class Person(models.Model):
         verbose_name_plural = verbose_name
         unique_together = [['passport_series', 'passport_number'], ]
 
-    MAN = 'М'
-    WOMAN = 'Ж'
+    MAN = 'M'
+    WOMAN = 'W'
     MALE = (
         (MAN, 'Мужской'),
         (WOMAN, 'Женский'),

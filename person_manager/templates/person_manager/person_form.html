@@ -7,30 +7,17 @@
     <div class="row">
         <div class="col-5 col-xs-2 d-block mx-auto">
             <div class="row">
-                <div class="col header-h2">
-                        <h2>Карта №</h2>
-                </div>
-                <div class="col-4">
-                    {{ card.card_number }}
-                </div>
-                <div class="col">
-                    {{ card.join_date }}
-                </div>
+                <div class="col header-h2"><h2>Карта №</h2></div>
+                <div class="col-4">{{ card.card_number }}</div>
+                <div class="col">{{ card.join_date }}</div>
             </div>
         </div>
     </div>
     <br>
     <div class="row">
-        <div class="col">
-            <input type="text" id="pk" style="display: none" value="{{ id }}">
-            {% include 'person_manager/components/person_component.html' %}
-            <hr class="my-0">
-            {% include 'person_manager/components/address_edit_component.html' %}
-            <hr class="my-0">
-            {% include 'person_manager/components/document_component.html' with create=True %}
-            <hr class="my-0">
-            {% include 'person_manager/components/contacts_component.html' %}
-        </div>
+        {% load crispy_forms_tags %}
+        {% crispy form %}
+        {% crispy address %}
     </div>
     <div class="row">
         <div class="col">
@@ -60,22 +47,4 @@
     </div>
 </form>
 <br>
-<!-- Modal -->
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
-     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="modal-body"></div>
-            <div class="modal-footer" id="submitBlock">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
 {% endblock content%}

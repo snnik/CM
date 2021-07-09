@@ -1,36 +1,4 @@
 {% block address_component %}
 {% load crispy_forms_tags %}
-<div class="form-row my-0">
-    <div class="col-12 col-md-4 col-lg-4 form-group my-0">
-        {{ address.terrain|default:""|as_crispy_field }}
-    </div>
-    <div class="col-12 col-lg-4 form-group">
-        {{ address.region|default:""|as_crispy_field }}
-    </div>
-    <div class="col-12 col-lg-4 form-group">
-        {{ address.district|default:""|as_crispy_field }}
-    </div>
-</div>
-<div class="form-row my-0">
-     <div class="col-12 col-lg-6 form-group">
-        {{ address.city|default:""|as_crispy_field }}
-    </div>
-    <div class="col-12 col-lg-6 form-group">
-        {{ address.settlement|default:""|as_crispy_field }}
-    </div>
-</div>
-<div class="form-row my-0">
-    <div class="col-12 col-lg-6 form-group">
-        {{ address.street|default:""|as_crispy_field }}
-    </div>
-    <div class="col-12 col-md-2 col-lg-2 form-group">
-        {{ address.house|default:""|as_crispy_field }}
-    </div>
-    <div class="col-12 col-md-2 col-lg-2 form-group">
-        {{ address.room|default:""|as_crispy_field }}
-    </div>
-    <div class="col-12 col-md-2 col-lg-2 form-group">
-        {{ address.register_date|default:""|as_crispy_field }}
-    </div>
-</div>
+{% crispy address %}
 {% endblock address_component %}
