@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-
 {% block content %}
+{% include 'person_manager/components/message_component.html' %}
 <div class="alert alert-primary" role="alert" id="msg" style="display: none"></div>
 <form method="post" class="inline-form">
     {% csrf_token %}
     <div class="row">
-        <div class="col-5 col-xs-2 d-block mx-auto">
+        <div class="col col-lg-5 d-block mx-auto">
             <div class="row">
                 <div class="col header-h2"><h2>Карта №</h2></div>
                 <div class="col-4">{{ card.card_number }}</div>
@@ -14,11 +14,12 @@
         </div>
     </div>
     <br>
-    <div class="row">
-        {% load crispy_forms_tags %}
-        {% crispy form %}
-        {% crispy address %}
-    </div>
+    {% load crispy_forms_tags %}
+    {% crispy form %}
+    {% crispy address %}
+    {% if id %}
+    {% crispy dul_form %}
+    {% endif %}
     <div class="row">
         <div class="col">
             <a class="btn float-left btn-icon btn-success mx-2" href="{% url 'persons_list' %}">

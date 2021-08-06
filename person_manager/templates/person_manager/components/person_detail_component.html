@@ -27,17 +27,17 @@
             <div class="col-5">
                 <h5 class="text-center">
                     МЕДИЦИНСКАЯ КАРТА ПАЦИЕНТА, ПОЛУЧАЮЩЕГО МЕДИЦИНСКУЮ ПОМОЩЬ В АМБУЛАТОРНЫХ УСЛОВИЯХ N 
-                    <ins>{{object.card.card_number}}</ins>
+                    <ins>{{object.card_fk.card_number}}</ins>
                 </h5>
             </div>
         </div>
         <div class="d-flex flex-row justify-content-start mb-1">
             <div class="col-5">1. Дата заполнения медицинской карты: число</div>
-            <div class="col-1 border-bottom border-dark text-center"> {{object.card.join_date|date:"d"}}</div>
+            <div class="col-1 border-bottom border-dark text-center"> {{object.card_fk.join_date|date:"d"}}</div>
             <div class="col-1">месяц</div>
-            <div class="col-2 border-bottom border-dark text-center">{{object.card.join_date|date:"E"}}</div>
+            <div class="col-2 border-bottom border-dark text-center">{{object.card_fk.join_date|date:"E"}}</div>
             <div class="col-1">год</div>
-            <div class="col-1 border-bottom border-dark text-center">{{object.card.join_date|date:"Y"}}</div>
+            <div class="col-1 border-bottom border-dark text-center">{{object.card_fk.join_date|date:"Y"}}</div>
         </div>
         <div class="d-flex flex-row justify-content-start mb-1">
             <div class="col-3">2. Фамилия, имя, отчество</div>

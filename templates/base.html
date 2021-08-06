@@ -20,16 +20,14 @@
         {% if user.is_authenticated %}
             {% include 'menu.html' %}
         {% endif %}
-        <br>
         <div class="{{ container_wrapper | default:"container" }} px-0 d-flex flex-column h-100">
             <div class="row mx-0 px-0">
                 <div class="col{% if not user.is_anonymous %} offset-md-2 {% endif %}">
-                    {% if user.is_authenticated %}
+                {% if user.is_authenticated %}
                     <div class="header-h1">
                         <h1>{{title}}</h1>
                     </div>
                     {% endif %}
-                    {% include 'person_manager/components/message_component.html' %}
                     {% block content %}
                     {% endblock content %}
                 </div>

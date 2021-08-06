@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="row justify-content-center my-5">
+        <form class="needs-validation col-auto align-self-center" action="." method="post" novalidate>
+            {% csrf_token %}
+            <div class="form-col">
+                <label for="username">Введите логин пользователя:</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" name="username" id="username" placeholder="Логин"
+                           aria-describedby="inputGroupPrepend" required>
+                    <div class="invalid-tooltip">
+                        Ошибка! Введите логин!
+                    </div>
+                </div>
+            </div>
+            <div class="form-col">
+                <label for="password">Введите пароль:</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Пароль"
+                       aria-describedby="inputGroupPrepend" required>
+                <div class="invalid-tooltip">
+                    Ошибка! Введите пароль!
+                </div>
+            </div>
+            <br>
+            <button class="btn btn-primary btn-icon" type="submit">
+                <span class="icon"><i class="fas fa-sign-in-alt"></i></span>
+                Вход
+            </button>
+        </form>
+    </div>
+    {% if login_error %}
+    <div class="row justify-content-center" style="height: 20px">
+        <div class="alert alert-danger" role="alert">
+            <p><small>{{ login_error }}</small></p>
+        </div>
+    </div>
+    {% endif %}
+    <script id="rendered-js">
+            (function() {
+              'use strict';
+              window.addEventListener('load', function() {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                  form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                      event.preventDefault();
+                      event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                  }, false);
+                });
+              }, false);
+            })();
+    </script>
+{% endblock content %}

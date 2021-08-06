@@ -1,49 +1,102 @@
+import datetime
 from django.core.exceptions import ValidationError
-from django.db import models
 from django.urls import reverse
+from django.db import models
 from django.contrib.auth import get_user_model
-User = get_user_model()
-# TODO: Добавление физического лица как объекта без учета документов
-# TODO: Выделить документы в отдельную сущность. Формат шаблона JSON, описание, GUID вместо кода
-# TODO: field validation in document type objects
-# TODO: conntacts: template validation
+from django.utils import timezone
 
+User = get_user_model()
 
 class Male(models.Model):
-    code = models.CharField(max_length=5)
-    name = models.CharField(max_length=10)
-
-
-class DocumentType(models.Model):
-    code = models.CharField(max_length=10)
-    name = models.CharField(max_length=20)
-
-
-class Passport(models.Model):
     class Meta:
+        verbose_name = 'Пол'
+        verbose_name_plural = verbose_name
+    name = models.CharField(max_length=20, verbose_name='Наименование')
+
+    def __str__(self):
+        return str(self.name)
+
+
+class Terrain(models.Model):
+    class Meta:
+        verbose_name = 'Территория'
+        verbose_name_plural = verbose_name
+    name = models.CharField(max_length=20, verbose_name='Наименование')
+
+    def __str__(self):
+        return str(self.name)
+
+
+class DULType(models.Model):
+    class Meta:
+        verbose_name = 'Тип ДУЛ'
+        verbose_name_plural = verbose_name
+    name = models.CharField(max_length=20, verbose_name='Тип документа')
+
+    def __str__(self):
+        return str(self.name)
+
+
+class DUL(models.Model):
+    class Meta:
+        verbose_name = 'ДУЛ'
+        verbose_name_plural = verbose_name
         unique_together = [['series', 'number'], ]
 
-    type = models.ForeignKey('person_manager.DocumentType', on_delete=models.CASCADE)
-    series = models.CharField(max_length=5, blank=True, null=True, verbose_name='Серия документа')
-    number = models.CharField(blank=True, max_length=10, null=True, verbose_name='Номер документа')
+    type = models.ForeignKey('person_manager.DULType', verbose_name='Тип документа', on_delete=models.PROTECT, default=1)
+    series = models.CharField(max_length=5, blank=True, verbose_name='Серия документа')
+    number = models.CharField(max_length=10, blank=True, verbose_name='Номер документа')
     issuing = models.TextField(blank=True, verbose_name='Кем выдан')
     issue_code = models.CharField(blank=True, verbose_name='Код подразделения', max_length=7)
     issue_date = models.DateField(blank=True, null=True, verbose_name='Дата выдачи')
     issue_country = models.CharField(max_length=30, blank=True, verbose_name='Страна',
                                               default='Российская федерация')
+    person = models.ForeignKey('person_manager.Person', on_delete=models.CASCADE)
+    is_delete = models.BooleanField(default=False)
+
+
+    def __str__(self):
+        return 'Документ {person}'.format(person=str(self.person))
+
+
+class PolisType(models.Model):
+    begin_date = models.DateField()
+    end_date = models.DateField()
+    code = models.CharField(max_length=255, default='', blank=True)
+    name = models.CharField(max_length=255, default='', blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Polis(models.Model):
+    class Meta:
+        verbose_name = 'Полис'
+        verbose_name_plural = verbose_name
+        unique_together = [['series', 'number'], ]
+
+    polis_type = models.ForeignKey('PolisType', on_delete=models.PROTECT, verbose_name='tип полиса')
+    series = models.CharField(blank=True, max_length=10, verbose_name='Серия полиса')
+    number = models.CharField(blank=True, max_length=16, verbose_name='Номер полиса')
+    smo_id = models.ForeignKey(to='person_manager.SMO', on_delete=models.CASCADE,
+                               verbose_name='Организация, выдавшая ОМС', blank=True, default=-1)
+    person_fk = models.ForeignKey('person_manager.Person', blank=True, null=True,
+                               on_delete=models.CASCADE, verbose_name='Владелец полиса')
+    is_delete = models.BooleanField(default=False)
+
+    def __str__(self):
+        return '{person} {polis_type}'.format(person=str(self.person_fk), polis_type=str(polis_type))
 
 
 class SNILS(models.Model):
+    class Meta:
+        verbose_name = 'СНИЛС'
+        verbose_name_plural = verbose_name
     number = models.CharField(blank=True, null=True, unique=True, max_length=14, verbose_name='Номер СНИЛС')
-    person_id = models.IntegerField()
+    is_delete = models.BooleanField(default=False)
 
-
-class OMS(models.Model):
-    number = models.CharField(blank=True, null=True, unique=True, max_length=16, verbose_name='Номер ОМС')
-    insurance_company = models.ForeignKey(to='person_manager.HealthInsuranceCompany',
-                                              on_delete=models.CASCADE, verbose_name='Организация, выдавшая ОМС',
-                                              blank=True, default=-1)
-    person_id = models.IntegerField()
+    def __str__(self):
+        return 'Полис {person}'.format(person=str(self.person), number=self.number)
 
 
 class Person(models.Model):
@@ -52,49 +105,31 @@ class Person(models.Model):
         db_table = 'persons'
         verbose_name = 'Пациент'
         verbose_name_plural = verbose_name
-        unique_together = [['passport_series', 'passport_number'], ]
-
-    MAN = 'M'
-    WOMAN = 'W'
-    MALE = (
-        (MAN, 'Мужской'),
-        (WOMAN, 'Женский'),
-    )
-
-    PASSPORT = 'PASSP'
-    BIRTHDAY_DOCUMENT = 'BIRTH'
-    DUL_TYPE = ((PASSPORT, 'Паспорт'),
-                (BIRTHDAY_DOCUMENT, 'Свидетельство о рождении'))
 
     first_name = models.CharField(max_length=30, verbose_name='Имя')
     last_name = models.CharField(max_length=30, verbose_name='Фамилия')
     patronymic_name = models.CharField(max_length=30, verbose_name='Отчество')
     birthday = models.DateField(verbose_name='Дата рождения')
-    email = models.EmailField(help_text='Введите адрес электронной почты', verbose_name='Электронная почта', blank=True)
+    email = models.EmailField(help_text='Введите адрес электронной почты', verbose_name='Электронная почта',
+                              blank=True, default='')
     phone = models.CharField(max_length=16, verbose_name='Домашний телефон',
-                             help_text='Введите номер домашнего телефона', blank=True)
+                             help_text='Введите номер домашнего телефона', blank=True, default='')
     phone_mobile = models.CharField(max_length=16, verbose_name='Мобильный телефон',
-                                    help_text='Введите номер мобильного телефона', blank=True)
-    male = models.CharField(max_length=1, choices=MALE, default=MAN, verbose_name='Пол')
-    card = models.OneToOneField('person_manager.Card', on_delete=models.SET_NULL, null=True, verbose_name='Номер карты')
-    passport_type = models.CharField(max_length=5, choices=DUL_TYPE, default=PASSPORT, verbose_name='Тип документа')
-    passport_series = models.CharField(max_length=5, blank=True, null=True, verbose_name='Серия документа')
-    passport_number = models.CharField(blank=True, max_length=10, null=True, verbose_name='Номер документа')
-    passport_issuing = models.TextField(blank=True, verbose_name='Кем выдан')
-    passport_issue_code = models.CharField(blank=True, verbose_name='Код подразделения', max_length=7)
-    passport_issue_date = models.DateField(blank=True, null=True, verbose_name='Дата выдачи')
-    passport_issue_country = models.CharField(max_length=30, blank=True, verbose_name='Страна',
-                                              default='Российская федерация')
-    snils_number = models.CharField(blank=True, null=True, unique=True, max_length=14, verbose_name='Номер СНИЛС')
-    oms_number = models.CharField(blank=True, null=True, unique=True, max_length=16, verbose_name='Номер ОМС')
-    oms_insurance_company = models.ForeignKey(to='person_manager.HealthInsuranceCompany',
-                                              on_delete=models.CASCADE, verbose_name='Организация, выдавшая ОМС',
-                                              blank=True, default=-1)
-    # representative = models.ForeignKey('self', on_delete=models.DO_NOTHING, verbose_name='Представитель', blank=True)
-    create_date = models.DateTimeField(auto_now_add=True)
-    update_date = models.DateTimeField(auto_now=True)
+                                    help_text='Введите номер мобильного телефона', blank=True, default='')
+    male_fk = models.ForeignKey('person_manager.Male', default=1, verbose_name='Пол', on_delete=models.CASCADE)
+    card_fk = models.OneToOneField('person_manager.Card',  on_delete=models.SET_NULL, null=True, blank=True,
+                                   verbose_name='Номер карты')
+    snils_fk = models.OneToOneField('person_manager.SNILS', on_delete=models.CASCADE, blank=True,
+                                 null=True, verbose_name='СНИЛС')
+    person_fk = models.ForeignKey(to='self', on_delete=models.SET_NULL, verbose_name='Представитель',
+                                  blank=True, null=True)
     is_delete = models.BooleanField(default=False)
-    user_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    user_created = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=1, blank=True,
+                                     related_name='created_person_id')
+    create_date = models.DateTimeField(auto_now_add=True)
+    user_updated = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=1, blank=True,
+                                     related_name='updated_person_id')
+    update_date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return '{f} {i} {o}'.format(f=self.last_name, i=self.first_name, o=self.patronymic_name)
@@ -106,49 +141,26 @@ class Person(models.Model):
         self.is_delete = True
         super().save(*args, **kwargs)
 
-    def get_documents(self):
-        documents = []
-        if self.passport_number and self.passport_series:
-            documents.append('Паспорт серия: {s} номер: {n}'.format(s=self.passport_series, n=self.passport_number))
-        if self.snils_number:
-            documents.append('СНИЛС номер: {n}'.format(n=self.snils_number))
-        if self.oms_number:
-            documents.append('ОМС номер: {n}'.format(n=self.oms_number))
-        return documents
-
     def save(self, *args, **kwargs):
-        if not self.passport_number:
-            self.passport_number = None
-        if not self.passport_series:
-            self.passport_series = None
-        if not self.oms_number:
-            self.oms_number = None
-        if not self.snils_number:
-            self.snils_number = None
         self.last_name = str(self.last_name).strip().capitalize()
         self.first_name = str(self.first_name).strip().capitalize()
         self.patronymic_name = str(self.patronymic_name).strip().capitalize()
         super().save(*args, **kwargs)
 
 
-class HealthInsuranceCompany(models.Model):
+class SMO(models.Model):
     class Meta:
-        db_table = 'health_insurance_company'
+        db_table = 'smo'
         verbose_name = 'Страховая'
         verbose_name_plural = verbose_name
 
     name = models.CharField(max_length=255, verbose_name='Наименование')
-    id_user = models.IntegerField(default=-1)
-    create_date = models.DateTimeField(auto_now_add=True)
-    update_date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return str(self.name)
+        return self.name
 
     def delete(self, using=None, keep_parents=False):
-        if self.pk == -1:
-            pass
-        else:
+        if not self.pk == -1:
             super().delete(using=None, keep_parents=False)
 
 
@@ -159,29 +171,23 @@ class AddressType(models.Model):
         verbose_name = 'Типы адресов'
         verbose_name_plural = verbose_name
 
-    type = models.CharField(max_length=10, blank=False)
-    name = models.CharField(max_length=30, blank=False)
+    type = models.CharField(max_length=10, verbose_name='Тип')
+    name = models.CharField(max_length=30, verbose_name='Наименование')
 
     def __str__(self):
-        return "{name}".format(name=str(self.name))
+        return "{name}".format(name=self.name)
 
 
 class Address(models.Model):
-
-    CITY = '1'
-    COUNTRY = '2'
-    terrain = (
-        (CITY, 'Городская'),
-        (COUNTRY, 'Сельская'),
-    )
 
     class Meta:
         db_table = 'address'
         verbose_name = 'Адреса'
         verbose_name_plural = verbose_name
 
-    type = models.ForeignKey('person_manager.AddressType', on_delete=models.CASCADE, null=True, blank=True,
-                             verbose_name='Тип адреса', help_text='Выберите тип адреса: Регистрация/Место пребывания')
+    type = models.ForeignKey('person_manager.AddressType', on_delete=models.CASCADE,
+                             default=AddressType.objects.get(type='REG').pk,verbose_name='Тип адреса',
+                             help_text='Выберите тип адреса: Регистрация/Место пребывания')
     region = models.CharField(max_length=50, blank=True, verbose_name='Область')
     district = models.CharField(max_length=50, blank=True, verbose_name='Район')
     city = models.CharField(max_length=50, blank=True, verbose_name='Город')
@@ -189,20 +195,24 @@ class Address(models.Model):
     street = models.CharField(max_length=50, blank=True, verbose_name='Улица')
     house = models.CharField(blank=True, verbose_name='Дом', max_length=10)
     room = models.CharField(blank=True, verbose_name='Квартира', max_length=10)
-    terrain = models.CharField(max_length=1, choices=terrain, default=CITY, verbose_name='Местность')
+    terrain_fk = models.ForeignKey(to='person_manager.Terrain', verbose_name='Местность', default=1,
+                                   on_delete=models.PROTECT)
     register_date = models.DateField(blank=True, null=True, verbose_name='Дата регистрации')
     person = models.ForeignKey('person_manager.person', blank=True, null=True, on_delete=models.CASCADE)
+    is_delete = models.BooleanField(default=False)
 
     def __str__(self):
         address_string = ''
+        city = Terrain.objects.get(pk=1)
+        settl = Terrain.objects.get(pk=2)
 
-        if self.terrain == '1':
+        if self.terrain_fk == city:
             if self.region:
                 address_string = ', '.join([self.region, self.city])
             else:
                 address_string = self.city
 
-        if self.terrain == '2':
+        if self.terrain_fk == settl:
             if self.region:
                 address_string = self.region
                 if self.district:
@@ -222,17 +232,11 @@ class Address(models.Model):
             address_string = ', '.join([address_string, str(self.room)])
         return address_string
 
-    def is_registration_address(self):
-        t = self.type
-        if t.type == 'REG':
-            return True
-        else:
-            return False
-
     def clean_fields(self, exclude=None):
         super(Address, self).clean_fields()
+        city = Terrain.objects.get(pk=1)
+        settl = Terrain.objects.get(pk=2)
         errors = {}
-
         try:
             if not self.city and not self.settlement:
                 raise ValidationError('Заполните поле "Город" или "Населенный пункт"!')
@@ -241,27 +245,18 @@ class Address(models.Model):
         except ValidationError as e:
             errors['city'] = e.error_list
             errors['settlement'] = e.error_list
-
         try:
-            if self.terrain == '1':
+            if self.terrain_fk == city:
                 if not self.city:
                     raise ValidationError('Указана городская местность, но поле "Город" не заполнено!')
-                if self.settlement:
-                    raise ValidationError('Для городской местности необходимо заполнить поле "Город"!')
         except ValidationError as e:
             errors['city'] = e.error_list
-            errors['settlement'] = e.error_list
-
         try:
-            if self.terrain == '2':
+            if self.terrain_fk == settl:
                 if not self.settlement:
                     raise ValidationError('Указана сельская местность, но поле "Населенный пункт" не заполнено!')
-                if self.city:
-                    raise ValidationError('Для сельской местности необходимо заполнить поле "Населенный пункт"!')
         except ValidationError as e:
             errors['settlement'] = e.error_list
-            errors['city'] = e.error_list
-
         if errors:
             raise ValidationError(errors)
 
@@ -273,11 +268,9 @@ class Card(models.Model):
         verbose_name = 'Медицинская карта'
         verbose_name_plural = verbose_name
 
-    card_number = models.IntegerField(unique=True)
+    card_number = models.IntegerField(unique=True, verbose_name='Номер')
     id_user = models.IntegerField(default=-1)
-    join_date = models.DateField()
-    create_date = models.DateTimeField(auto_now_add=True)
-    update_date = models.DateTimeField(auto_now=True)
+    join_date = models.DateField(verbose_name='Дата создания')
 
     def __str__(self):
-        return 'Карта №: {}'.format(str(self.card_number))
+        return 'Карта {}'.format(str(self.card_number))

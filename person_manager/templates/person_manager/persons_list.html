@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+{% include 'person_manager/components/message_component.html' %}
 <div class="content flex-grow-1">
     <div class="d-flex flex-row justify-content-between">
         <div class="col"></div>
@@ -12,9 +13,9 @@
             <ul class="list-rectangle">
                 {% for p in object_list %}
                 <li onclick="LoadEvent(this, '{% url 'person_content' p.id %}')">
-                    <p>Карта номер: {{p.card__card_number}}</p>
+                    <p>Карта номер: {{p.card_fk__card_number}}</p>
                     <p>{{p.last_name}} {{ p.first_name }} {{p.patronymic_name}}</p>
-                    <p>Дата регистрации: {{ p.card__join_date | date:"SHORT_DATE_FORMAT" }}</p>
+                    <p>Дата регистрации: {{ p.card_fk__join_date | date:"SHORT_DATE_FORMAT" }}</p>
                 </li>
                 {% endfor %}
                 {% if object_list %}

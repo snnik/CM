@@ -106,7 +106,7 @@ function onChangeEventInput(e){
             sIndex = 0;
         }
         blockedInputField(document.querySelector(blockedObjectId));
-        selectObject = document.querySelector('#id_terrain');
+        selectObject = document.querySelector('#id_terrain_fk');
         selectObject.selectedIndex = sIndex;
     }
 }
