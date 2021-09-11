@@ -4,13 +4,12 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
-from django.views.generic import ListView, DetailView, DeleteView, CreateView, UpdateView
-from person_manager.mixins import PersonMixin
+from django.views.generic import ListView, DetailView, DeleteView, CreateView, UpdateView, View
+from person_manager.utils import PersonMixin, get_create_person_kwargs, get_page_kwargs, get_update_person_kwargs
 from person_manager.models import AddressType, Person
 from person_manager.forms import PaginatorForm, FilterForm, PersonForm
 
 
-# Create your views here.
 class PersonsList(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     login_url = reverse_lazy('login')
     paginate_by = settings.PAGINATE
@@ -18,9 +17,8 @@ class PersonsList(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     template_name = 'person_manager/persons_list.html'
 
     def get_context_data(self, **kwargs):
-        kwargs['patients'] = True
+        kwargs.update(get_page_kwargs())
         kwargs['patients_list'] = True
-        kwargs['page_title'] = 'Список пациентов'
         kwargs['title'] = 'Список карт'
         kwargs['search_param'] = self.request.GET.get('search', '')
         kwargs['paginate_form'] = PaginatorForm()
@@ -77,9 +75,10 @@ class CreatePerson(LoginRequiredMixin, PermissionRequiredMixin, CreateView, Pers
     )
 
     def get_context_data(self, **kwargs):
-        person_context = self.get_person_data(context=super().get_context_data(**kwargs))
-        person_context['title'] = 'Добавить карту'
-        return dict(person_context)
+        person_context = super().get_context_data(**kwargs)
+        person_context['title'] = 'Добавление карты'
+        person_context.update(get_create_person_kwargs(request=self.request, person=self.object))
+        return person_context
 
     def form_valid(self, form):
         check = self.validation_forms(form=form)
@@ -103,9 +102,10 @@ class EditPerson(LoginRequiredMixin, PermissionRequiredMixin, PersonMixin, Updat
     )
 
     def get_context_data(self, **kwargs):
-        person_context = self.get_person_data(context=super().get_context_data(**kwargs))
+        person_context = super().get_context_data(**kwargs)
         person_context['title'] = 'Изменение карты'
-        return dict(person_context)
+        person_context.update(get_update_person_kwargs(request=self.request, person=self.object))
+        return person_context
 
     def form_valid(self, form):
         check = self.validation_forms(form=form)
@@ -115,7 +115,9 @@ class EditPerson(LoginRequiredMixin, PermissionRequiredMixin, PersonMixin, Updat
             return self.form_invalid(form=form)
 
     def form_invalid(self, form):
-        return self.render_to_response(self.get_context_data(form=form, address=self.address_form, card=self.card_form))
+        return self.render_to_response(
+            self.get_context_data()
+        )
 
 
 class DeletePerson(LoginRequiredMixin, DeleteView):
@@ -130,3 +132,7 @@ class DeletePerson(LoginRequiredMixin, DeleteView):
         kwargs['title'] = 'Удалить карту'
         kwargs['page_title'] = 'Регистратура'
         return super().get_context_data(**kwargs)
+
+
+class EditPers(View):
+    pass

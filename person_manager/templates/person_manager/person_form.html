@@ -8,17 +8,46 @@
         <div class="col col-lg-5 d-block mx-auto">
             <div class="row">
                 <div class="col header-h2"><h2>Карта №</h2></div>
-                <div class="col-4">{{ card.card_number }}</div>
-                <div class="col">{{ card.join_date }}</div>
+                <div class="col-4">{{ card_form.card_number }}</div>
+                <div class="col">{{ card_form.join_date }}</div>
             </div>
         </div>
     </div>
     <br>
     {% load crispy_forms_tags %}
     {% crispy form %}
-    {% crispy address %}
+    <div class="row">
+        <div class="col-12 form-group text-center"><p class="text-muted">Адрес</p></div>
+    </div>
+    {{ AddressFormSet.management_form }}
+    {% for AddressForm in AddressFormSet %}
+    {{ AddressForm.id }}
+    {% crispy AddressForm %}
+    {% endfor %}
     {% if id %}
-    {% crispy dul_form %}
+    <div class="row">
+        <div class="col-12 text-center"><p class="text-muted">Документ удостоверяющий личность</p></div>
+    </div>
+    {{ DULFormSet.management_form }}
+    {% for DULForm in DULFormSet %}
+    {{ DULForm.id }}
+    {% crispy DULForm %}
+    {% endfor %}
+    {% endif %}
+    {% if id %}
+    <div class="row">
+        <div class="col-12 col-xl-3 text-center"><p class="text-muted">СНИЛС</p></div>
+        <div class="col-12 col-xl-9 text-center"><p class="text-muted">ОМС</p></div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-xl-3">{% crispy snils_form %}</div>
+        <div class="col-12 col-xl-9">
+            {{ PolisFormSet.management_form }}
+            {% for PolisForm in PolisFormSet %}
+            {% crispy PolisForm %}
+            {% endfor %}
+        </div>
+    </div>
     {% endif %}
     <div class="row">
         <div class="col">

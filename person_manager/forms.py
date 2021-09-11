@@ -3,7 +3,9 @@ from django import forms
 from django.db.models import Max
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column
-from person_manager.models import Person, Card, Address, Terrain, DUL
+from django.forms import inlineformset_factory
+
+from person_manager.models import Person, Card, Address, Terrain, DUL, SNILS, Polis
 
 
 class SearchForm(forms.Form):
@@ -54,10 +56,10 @@ class AddressForm(forms.ModelForm):
         fields = ('region', 'district', 'city', 'settlement',
                   'street', 'house', 'room', 'register_date', 'terrain_fk')
         widgets = {
-            'city': forms.TextInput(attrs={'onclick': 'onChangeEventInput(this);'}),
-            'settlement': forms.TextInput(attrs={'onclick': 'onChangeEventInput(this);'}),
+            'city': forms.TextInput(attrs={'onclick': 'onChangeEventInput(this);', }),
+            'settlement': forms.TextInput(attrs={'onclick': 'onChangeEventInput(this);', }),
             'register_date': forms.DateInput(attrs={'class': 'datepicker-here', 'required': False}),
-            'terrain_fk': forms.Select(attrs={'onchange': 'onChangeEventSelect(this);'}),
+            'terrain_fk': forms.Select(attrs={'onchange': 'onChangeEventSelect(this);', }),
         }
 
     def __init__(self, *args, **kwargs):
@@ -127,12 +129,37 @@ class PersonForm(forms.ModelForm):
                 Column('phone', css_class='col-12 col-lg-4 col-xl-4 form-group'),
                 Column('email', css_class='col-12 col-lg-4 col-xl-4 form-group'),
             ),
-            # Row(
-            #     Column('snils_number', css_class='col-12 col-lg-4 form-group'),
-            #     Column('oms_number', css_class='col-12 col-lg-4 form-group'),
-            #     Column('oms_insurance_company', css_class='col-12 col-lg-4 form-group')
-            # )
         )
+
+
+class SNILSForm(forms.ModelForm):
+    class Meta:
+        model = SNILS
+        fields = ['number', ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(Column('number', css_class='col-12 form-group'))
+
+
+class PolisForm(forms.ModelForm):
+    class Meta:
+        model = Polis
+        exclude = ['series', 'person_fk', 'is_delete']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            Row(
+                    Column('polis_type', css_class='col-12 col-lg-4 form-group'),
+                    Column('number', css_class='col-12 col-lg-4 form-group'),
+                    Column('smo_id', css_class='col-12 col-lg-4 form-group')
+                )
+            )
 
 
 class DULForm(forms.ModelForm):
@@ -143,10 +170,7 @@ class DULForm(forms.ModelForm):
 
         widgets = {
             'type': forms.Select(),
-            'series': forms.DateInput(attrs={'id': 'id_passport_series'}),
-            'number': forms.TextInput(attrs={'id': 'id_passport_number'}),
             'issuing': forms.Textarea(attrs={'rows': '4'}),
-            'issue_code': forms.TextInput(attrs={'id': 'id_passport_issue_code'}),
             'issue_date': forms.DateInput(attrs={'class': 'datepicker-here'}),
             'issue_country': forms.TextInput(),
         }
@@ -177,3 +201,13 @@ class DULForm(forms.ModelForm):
                     css_class='col-4'),
             ),
         )
+
+
+AddressFormSet = inlineformset_factory(parent_model=Person, model=Address, form=AddressForm,
+                                       fields=AddressForm.Meta.fields, extra=1, max_num=1, can_delete=False)
+
+DULFormSet = inlineformset_factory(parent_model=Person, model=DUL, form=DULForm, exclude=DULForm.Meta.exclude,
+                                   max_num=1, extra=1, can_delete=False)
+
+PolisFormSet = inlineformset_factory(parent_model=Person, model=Polis, form=PolisForm, exclude=PolisForm.Meta.exclude,
+                                     max_num=1, extra=1, can_delete=False)

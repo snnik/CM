@@ -18,7 +18,7 @@ from reportlab.pdfbase.pdfmetrics import registerFontFamily
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from reportlab.platypus import BaseDocTemplate, Frame, PageTemplate, Paragraph, TableStyle, Table, FrameBreak
-from person_manager.models import Person
+from person_manager.models import Person, Male, Terrain
 from print_module.forms import ContractForm
 
 font_size = 8
@@ -134,18 +134,18 @@ def get_dict(id, date_contract):
                                                              p=str(person.patronymic_name)[0:1])
 
         result_dict['age'] = person.birthday
-        card = person.card
-        result_dict['card'] = card.card_number
+        result_dict['card'] = person.card_fk.card_number
         locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
         result_dict['dog_date'] = d.strftime('%d.%m.%Y г.')
 
-        if person.passport_series or person.passport_number:
-            result_dict['passport_series'] = str(person.passport_series)
-            result_dict['passport_number'] = str(person.passport_number)
+        dul = person.dul_set.get()
+        if dul:
+            result_dict['passport_series'] = str(dul.series)
+            result_dict['passport_number'] = str(dul.number)
             result_dict['passport_issuing'] = \
-                '{issuer}, {issuer_code}'.format(issuer=str(person.passport_issuing),
-                                                 issuer_code=str(person.passport_issue_code))
-            result_dict['passport_issue_date'] = person.passport_issue_date.strftime('%d.%m.%Y')
+                '{issuer}, {issuer_code}'.format(issuer=str(dul.issuing),
+                                                 issuer_code=str(dul.issue_code))
+            result_dict['passport_issue_date'] = dul.issue_date.strftime('%d.%m.%Y')
         else:
             result_dict['passport_series'] = result_dict['passport_number'] = result_dict['passport_issuing'] = \
                 result_dict['passport_issue_date'] = ''
@@ -201,10 +201,10 @@ def print_card(request, id):
     person = Person()
     try:
         person = Person.objects.get(pk=id)
-        card = person.card
+        card = person.card_fk
         # Draw things on the PDF. Here's where the PDF generation happens.
         # See the ReportLab documentation for the full list of functionality.
-        p.drawString(405, 676, str(card.card_number))
+        p.drawString(405, 676, str(person.card_fk.card_number))
         locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
         p.drawString(350, 651, card.join_date.strftime('%m'))
         p.drawString(260, 651, str(card.join_date.day))
@@ -215,16 +215,19 @@ def print_card(request, id):
         p.drawString(330, 622, str(person.birthday.day))
         p.drawString(500, 622, str(person.birthday.year))
         p.drawString(463, 579, person.phone_mobile)
-        if person.male == "М":
+        man = Male.objects.get(pk=1)
+        woman = Male.objects.get(pk=2)
+        if person.male_fk == man:
             p.line(70, 620, 105, 620)
-        if person.male == "Ж":
+        if person.male_fk == woman:
             p.line(110, 620, 147, 620)
-        if person.snils_number:
-            p.drawString(395, 554, person.snils_number if person.snils_number else '')
+        if person.snils_fk:
+            p.drawString(395, 554, person.snils_fk.number if person.snils_fk.number else '')
         p.drawString(105, 554, '')
-        if person.oms_number:
-            p.drawString(230, 554, person.oms_number if person.oms_number else '')
-            p.drawString(290, 539, str(person.oms_insurance_company))
+        polis = person.polis_set.filter(is_delete=False)
+        if polis:
+            p.drawString(230, 554, polis.number if polis.number else '')
+            p.drawString(290, 539, str(polis.smo_id_set))
     except ObjectDoesNotExist as e:
         print(e)
 
@@ -237,16 +240,24 @@ def print_card(request, id):
         p.drawString(72, 579, address.street)
         p.drawString(310, 579, str(address.house))
         p.drawString(405, 579, str(address.room))
-        if address.terrain == "1":
+
+        city = Terrain.objects.get(pk=1)
+
+        if address.terrain_fk == city:
             p.line(95, 565, 153, 565)
-        if address.terrain == "2":
+
+        settlement = Terrain.objects.get(pk=2)
+        if address.terrain_fk == settlement:
             p.line(155, 565, 211, 565)
 
     # Льгота
     p.drawString(157, 523, '')
-    p.drawString(280, 523, '')
-    p.drawString(417, 523, '')
-    p.drawString(487, 523, '')
+
+    dul = person.dul_set.get()
+    if dul:
+        p.drawString(280, 523, str(dul.type))
+        p.drawString(417, 523, dul.series)
+        p.drawString(487, 523, dul.number)
 
     # Диагноз
     d = ''

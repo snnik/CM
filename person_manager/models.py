@@ -44,8 +44,8 @@ class DUL(models.Model):
         unique_together = [['series', 'number'], ]
 
     type = models.ForeignKey('person_manager.DULType', verbose_name='Тип документа', on_delete=models.PROTECT, default=1)
-    series = models.CharField(max_length=5, blank=True, verbose_name='Серия документа')
-    number = models.CharField(max_length=10, blank=True, verbose_name='Номер документа')
+    series = models.CharField(max_length=5, blank=True, default='', verbose_name='Серия документа')
+    number = models.CharField(max_length=10, blank=True, default='', verbose_name='Номер документа')
     issuing = models.TextField(blank=True, verbose_name='Кем выдан')
     issue_code = models.CharField(blank=True, verbose_name='Код подразделения', max_length=7)
     issue_date = models.DateField(blank=True, null=True, verbose_name='Дата выдачи')
@@ -75,12 +75,13 @@ class Polis(models.Model):
         verbose_name_plural = verbose_name
         unique_together = [['series', 'number'], ]
 
-    polis_type = models.ForeignKey('PolisType', on_delete=models.PROTECT, verbose_name='tип полиса')
-    series = models.CharField(blank=True, max_length=10, verbose_name='Серия полиса')
-    number = models.CharField(blank=True, max_length=16, verbose_name='Номер полиса')
+    polis_type = models.ForeignKey('PolisType', blank=True, on_delete=models.PROTECT,
+                                   default=PolisType.objects.get(pk=-1), verbose_name='Тип полиса')
+    series = models.CharField(blank=True, default='', max_length=10, verbose_name='Серия полиса')
+    number = models.CharField(blank=True, default='', max_length=16, verbose_name='Номер полиса')
     smo_id = models.ForeignKey(to='person_manager.SMO', on_delete=models.CASCADE,
-                               verbose_name='Организация, выдавшая ОМС', blank=True, default=-1)
-    person_fk = models.ForeignKey('person_manager.Person', blank=True, null=True,
+                               verbose_name='Страховая МО', blank=True, default=-1)
+    person = models.ForeignKey('person_manager.Person', blank=True, null=True,
                                on_delete=models.CASCADE, verbose_name='Владелец полиса')
     is_delete = models.BooleanField(default=False)
 

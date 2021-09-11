@@ -86,11 +86,11 @@ function blockedInputField(e){
 function onChangeEventSelect(e){
     var sIndex = e.selectedIndex;
     if (sIndex === 0){
-        blockedObjectId = '#id_settlement';
-        unblockedObjectId = '#id_city';
+        blockedObjectId = '#id_address_set-0-settlement';
+        unblockedObjectId = '#id_address_set-0-city';
     } else if (sIndex === 1){
-        blockedObjectId = '#id_city';
-        unblockedObjectId = '#id_settlement';
+        blockedObjectId = '#id_address_set-0-city';
+        unblockedObjectId = '#id_address_set-0-settlement';
     }
     blockedInputField(document.querySelector(blockedObjectId));
     unblockedInputField(document.querySelector(unblockedObjectId));
@@ -98,15 +98,15 @@ function onChangeEventSelect(e){
 
 function onChangeEventInput(e){
     if (!e.readOnly){
-        if (e.id === 'id_settlement') {
-            blockedObjectId = '#id_city';
+        if (e.id === 'id_address_set-0-settlement') {
+            blockedObjectId = '#id_address_set-0-city';
             sIndex = 1;
-        } else if (e.id === 'id_city') {
-            blockedObjectId = '#id_settlement';
+        } else if (e.id === 'id_address_set-0-city') {
+            blockedObjectId = '#id_address_set-0-settlement';
             sIndex = 0;
         }
         blockedInputField(document.querySelector(blockedObjectId));
-        selectObject = document.querySelector('#id_terrain_fk');
+        selectObject = document.querySelector('#id_address_set-0-terrain_fk');
         selectObject.selectedIndex = sIndex;
     }
 }
